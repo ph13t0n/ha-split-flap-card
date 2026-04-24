@@ -1,5 +1,7 @@
 # ha-split-flap-card
 
+![Split-Flap Card preview](images/preview.svg)
+
 A Home Assistant Lovelace custom card that renders text or entity states as a classic split-flap display, inspired by railway and airport departure boards.
 
 Supports multilingual charsets, including Swedish Å, Ä and Ö.
