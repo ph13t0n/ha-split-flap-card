@@ -1,42 +1,63 @@
-# ha-split-flap-card
+
+# Split-Flap Card for Home Assistant
 
 ![Split-Flap Card preview](preview.svg)
 
-A Home Assistant Lovelace custom card that renders text or entity states as a classic split-flap display, inspired by railway and airport departure boards.
+## Notice
 
-Supports multilingual charsets, including Swedish Å, Ä and Ö.
+This project is currently in alpha.
+
+The configuration API may change before `v1.0.0`.  
+Bug reports are welcome, but please include your full YAML card configuration, Home Assistant version, browser/device information, screenshots if possible, and any browser console errors.
+
+---
+
+## Overview
+
+**Split-Flap Card** is a Home Assistant Lovelace custom card that renders text, entity states, entity attributes, auto-paged messages, MDI icon tokens, and a built-in clock as a classic mechanical split-flap display.
+
+It is inspired by railway station and airport departure boards, with support for animated segment flipping, multilingual character sets, Swedish characters, weather text, degree symbols, and configurable visual styling.
+
+---
+
 ## Features
 
 - Display static text
 - Display Home Assistant entity states
 - Display entity attributes
-- Classic split-flap visual style
-- Built-in charset presets
-- English default charset
-- Swedish charset support with Å, Ä and Ö
-- Nordic charset support
-- Custom charset support
+- Built-in clock mode
+- Mechanical split-flap animation
+- Auto-paging for long text
+- Smart page splitting by words
+- Fixed-length page splitting
+- MDI icon tokens rendered through `ha-icon`
+- Configurable icon token map
+- Configurable icon color, size, and vertical offset
+- Built-in visual editor using Home Assistant config form
 - Configurable colors
-- Configurable font family
 - Configurable segment size
+- Configurable font family
 - Configurable font size
+- Configurable hinge line
+- Configurable pin visibility
+- Configurable card and segment shadows
+- Swedish charset support with `Å`, `Ä`, `Ö`
+- Nordic charset support
+- Weather charset support including `°`
+- Extended Latin / CP1252 charset preset
+- Custom charset support
 - HACS-compatible dashboard plugin structure
+
+---
 
 ## Installation
 
 ### HACS custom repository
 
-1. Open HACS in Home Assistant.
-2. Go to **Custom repositories**.
-3. Add this repository.
-4. Select category **Dashboard**.
-5. Install **Split-Flap Card**.
-6. Refresh your browser.
-7. Add the card to your dashboard.
+1. Open **HACS** in Home Assistant.
+2. Open the menu in the top-right corner.
+3. Select **Custom repositories**.
+4. Add this repository URL:
 
-### Manual installation
-
-Download `ha-split-flap-card.js` and place it in:
-
-```text
-/config/www/ha-split-flap-card.js
+   ```text
+   https://github.com/YOUR_GITHUB_USERNAME/ha-split-flap-card
