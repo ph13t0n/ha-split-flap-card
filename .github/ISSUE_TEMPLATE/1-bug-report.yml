@@ -1,0 +1,155 @@
+name: Bug report
+description: Report a problem with Split-Flap Card
+title: "[Bug]: "
+labels:
+  - bug
+  - needs-info
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug.
+
+        Please include enough information to reproduce the issue.
+        Remove any private information before submitting, such as addresses, personal names, private entity names, API keys, tokens, or screenshots showing private spaces.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-check
+      description: Please confirm the following before submitting.
+      options:
+        - label: I have checked the README and documentation.
+          required: true
+        - label: I have checked the troubleshooting guide.
+          required: true
+        - label: I have removed private or sensitive information from the report.
+          required: true
+        - label: I am not loading both HACS and manual resources at the same time.
+          required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the issue clearly.
+      placeholder: The card does not render the degree symbol when using charset en.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+      placeholder: The card should display SUNNY 3 °C.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happened?
+      placeholder: The card displays SUNNY 3 C or leaves a blank space.
+    validations:
+      required: true
+
+  - type: textarea
+    id: yaml
+    attributes:
+      label: Card YAML configuration
+      description: Paste the full card YAML configuration. Use generic entity names if possible.
+      render: yaml
+      placeholder: |
+        type: custom:split-flap-card
+        source: text
+        text: "SUNNY 3 °C"
+        charset: weather
+        segments: 12
+        theme: kiosk_gold
+    validations:
+      required: true
+
+  - type: input
+    id: ha-version
+    attributes:
+      label: Home Assistant version
+      placeholder: "2026.x.x"
+    validations:
+      required: true
+
+  - type: input
+    id: hacs-version
+    attributes:
+      label: HACS version
+      placeholder: "2.x.x or not installed"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: install-method
+    attributes:
+      label: Installation method
+      options:
+        - HACS custom repository
+        - Manual installation
+        - Development / local file
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: resource-url
+    attributes:
+      label: Card resource URL
+      description: The dashboard resource URL used to load the card.
+      placeholder: "/hacsfiles/ha-split-flap-card/ha-split-flap-card.js"
+    validations:
+      required: false
+
+  - type: input
+    id: card-version
+    attributes:
+      label: Card version
+      description: Release version or resource query if known.
+      placeholder: "v0.1.0-alpha.1 or /local/ha-split-flap-card.js?v=030"
+    validations:
+      required: false
+
+  - type: input
+    id: browser-device
+    attributes:
+      label: Browser and device
+      placeholder: "Chrome on desktop, Home Assistant Android app, wall tablet browser"
+    validations:
+      required: true
+
+  - type: textarea
+    id: console-errors
+    attributes:
+      label: Browser console errors
+      description: Paste relevant browser console errors if available.
+      render: text
+      placeholder: |
+        Custom element doesn't exist: split-flap-card
+        TypeError: ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or video
+      description: Attach screenshots or a short video if useful. Please make sure they do not contain private information.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other context that may help reproduce or understand the issue.
+      placeholder: This happens after updating from HACS, but not with the manual resource.
+    validations:
+      required: false
