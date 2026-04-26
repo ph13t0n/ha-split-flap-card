@@ -1,0 +1,118 @@
+name: Documentation
+description: Report missing, unclear, or incorrect documentation
+title: "[Docs]: "
+labels:
+  - documentation
+  - needs-review
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for documentation improvements, unclear examples, missing explanations, broken links, or outdated instructions.
+
+        Please keep examples generic. Avoid personal locations, private entity names, API keys, tokens, or screenshots showing private spaces.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-check
+      description: Please confirm the following before submitting.
+      options:
+        - label: I have checked the README and docs folder.
+          required: true
+        - label: I have checked existing issues to avoid duplicates.
+          required: true
+        - label: I have removed private or sensitive information from this request.
+          required: true
+
+  - type: dropdown
+    id: docs-area
+    attributes:
+      label: Documentation area
+      description: Which part of the documentation is affected?
+      options:
+        - README
+        - Installation
+        - Configuration
+        - Examples
+        - Charsets
+        - Icon tokens
+        - Themes
+        - Visual editor
+        - Troubleshooting
+        - FAQ
+        - HACS
+        - Development
+        - Roadmap
+        - Release notes
+        - Credits
+        - Privacy and public examples
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is unclear or incorrect?
+      description: Describe the documentation problem.
+      placeholder: The auto-paging example does not explain that icon tokens count as one segment.
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggested-change
+    attributes:
+      label: Suggested change
+      description: Describe what should be added, removed, or clarified.
+      placeholder: Add a short note under the auto-paging section explaining that :sunny: counts as one segment when icon_tokens is enabled.
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected-links
+    attributes:
+      label: Affected file or link
+      description: Paste the file path or link if known.
+      render: text
+      placeholder: docs/examples.md
+    validations:
+      required: false
+
+  - type: textarea
+    id: example
+    attributes:
+      label: Example text or YAML
+      description: Optional generic example that could be added to the documentation.
+      render: yaml
+      placeholder: |
+        type: custom:split-flap-card
+        source: text
+        text: ":sunny: SUNNY 3 °C"
+        charset: weather
+        segments: 16
+        icon_tokens: true
+        theme: kiosk_gold
+    validations:
+      required: false
+
+  - type: dropdown
+    id: importance
+    attributes:
+      label: Importance
+      options:
+        - Minor typo or wording
+        - Helpful clarification
+        - Important missing information
+        - Blocking installation or usage
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add anything else that may help.
+      placeholder: This would help new users understand why auto-paging behaves differently with icons.
+    validations:
+      required: false
