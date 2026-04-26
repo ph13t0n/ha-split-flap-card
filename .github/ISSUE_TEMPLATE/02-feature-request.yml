@@ -1,0 +1,132 @@
+name: Feature request
+description: Suggest a new feature or improvement for Split-Flap Card
+title: "[Feature]: "
+labels:
+  - feature
+  - needs-review
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an improvement.
+
+        Please keep examples generic. Avoid personal locations, private entity names, API keys, tokens, or screenshots showing private spaces.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-check
+      description: Please confirm the following before submitting.
+      options:
+        - label: I have checked the README and documentation.
+          required: true
+        - label: I have checked existing issues to avoid duplicates.
+          required: true
+        - label: I have removed private or sensitive information from this request.
+          required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Feature summary
+      description: Describe the feature in one or two sentences.
+      placeholder: Add a compact animation preset for narrow dashboard rows.
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What problem would this feature solve?
+      placeholder: It is currently possible to tune animation manually, but a preset would make compact kiosk rows easier to configure.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed solution
+      description: Describe how you would like the feature to work.
+      placeholder: |
+        Add:
+          animation_preset: compact
+
+        The preset could automatically configure step_duration, final_step_duration, stagger, and randomize_speed.
+    validations:
+      required: true
+
+  - type: textarea
+    id: example-yaml
+    attributes:
+      label: Example YAML
+      description: Optional example of how the feature could be configured.
+      render: yaml
+      placeholder: |
+        type: custom:split-flap-card
+        source: text
+        text: CENTRAL STATION
+        segments: 16
+        theme: kiosk_gold
+        animation_preset: compact
+    validations:
+      required: false
+
+  - type: dropdown
+    id: feature-area
+    attributes:
+      label: Feature area
+      description: Which area does this request relate to?
+      options:
+        - Animation
+        - Visual editor
+        - Icons / MDI tokens
+        - Charset / language support
+        - Themes / styling
+        - Auto-paging
+        - Clock mode
+        - Entity / attribute handling
+        - Documentation
+        - HACS / installation
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: importance
+    attributes:
+      label: Importance
+      description: How important is this feature for your use case?
+      options:
+        - Nice to have
+        - Useful improvement
+        - Important for my dashboard
+        - Blocking my intended use
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Have you tried any workaround or alternative configuration?
+      placeholder: I currently configure step_duration and stagger manually, but it is hard to reuse across cards.
+    validations:
+      required: false
+
+  - type: textarea
+    id: visual-reference
+    attributes:
+      label: Visual reference or mockup
+      description: Attach a screenshot, mockup, or reference if useful. Make sure it does not contain private information.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other context that may help evaluate the feature request.
+      placeholder: This would be useful for compact information rows, transit boards, weather displays, and wall dashboards.
+    validations:
+      required: false
