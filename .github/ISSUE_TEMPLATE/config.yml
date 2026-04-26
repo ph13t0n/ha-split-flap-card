@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Documentation
+    url: https://github.com/YOUR_GITHUB_USERNAME/ha-split-flap-card/tree/main/docs
+    about: Read the documentation before opening an issue.
+
+  - name: Troubleshooting
+    url: https://github.com/YOUR_GITHUB_USERNAME/ha-split-flap-card/blob/main/docs/troubleshooting.md
+    about: Common installation, cache, charset, icon token, and configuration problems.
+
+  - name: Support guide
+    url: https://github.com/YOUR_GITHUB_USERNAME/ha-split-flap-card/blob/main/SUPPORT.md
+    about: Learn what information to include when asking for help or reporting a bug.
