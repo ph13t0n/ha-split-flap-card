@@ -1,0 +1,135 @@
+name: Configuration help
+description: Ask for help with Split-Flap Card YAML or visual editor configuration
+title: "[Config]: "
+labels:
+  - configuration
+  - needs-info
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form when the card loads but you need help with configuration, layout, styling, charset, icons, paging, or animation.
+
+        Please keep examples generic. Remove private entity names, personal locations, API keys, tokens, and screenshots showing private spaces.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-check
+      description: Please confirm the following before submitting.
+      options:
+        - label: I have checked the README and documentation.
+          required: true
+        - label: I have checked the examples documentation.
+          required: true
+        - label: I have removed private or sensitive information from this request.
+          required: true
+
+  - type: dropdown
+    id: help-area
+    attributes:
+      label: What do you need help with?
+      options:
+        - Basic setup
+        - Entity state
+        - Entity attribute
+        - Built-in clock
+        - Auto-paging
+        - MDI icon tokens
+        - Charset / missing characters
+        - Swedish characters
+        - Weather text / degree symbol
+        - Visual editor
+        - Layout / sizing
+        - Colors / themes
+        - Animation timing
+        - HACS / installation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: What are you trying to achieve?
+      description: Describe the desired result.
+      placeholder: I want to show a compact weather row with an icon, text, and temperature.
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-result
+    attributes:
+      label: What happens now?
+      description: Describe the current result.
+      placeholder: The text appears, but the degree symbol is missing and the card is too wide.
+    validations:
+      required: true
+
+  - type: textarea
+    id: yaml
+    attributes:
+      label: Current YAML configuration
+      description: Paste your current card YAML. Use generic entity names if possible.
+      render: yaml
+      placeholder: |
+        type: custom:split-flap-card
+        source: text
+        text: ":sunny: SUNNY 3 °C"
+        charset: weather
+        segments: 16
+        icon_tokens: true
+        theme: kiosk_gold
+    validations:
+      required: true
+
+  - type: textarea
+    id: source-value
+    attributes:
+      label: Source value
+      description: If using an entity, paste a generic example of the entity state or attribute value.
+      render: text
+      placeholder: ":sunny: SUNNY 3 °C FROM CENTRAL STATION"
+    validations:
+      required: false
+
+  - type: input
+    id: ha-version
+    attributes:
+      label: Home Assistant version
+      placeholder: "2026.x.x"
+    validations:
+      required: false
+
+  - type: input
+    id: card-version
+    attributes:
+      label: Card version or resource URL
+      placeholder: "v0.1.0-alpha.1 or /local/ha-split-flap-card.js?v=030"
+    validations:
+      required: false
+
+  - type: input
+    id: browser-device
+    attributes:
+      label: Browser and device
+      placeholder: "Chrome on desktop, Home Assistant Android app, wall tablet browser"
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot or mockup
+      description: Attach a screenshot or mockup if useful. Please remove private information first.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add anything else that may help.
+      placeholder: The card is used in a compact information row with 32 segments.
+    validations:
+      required: false
