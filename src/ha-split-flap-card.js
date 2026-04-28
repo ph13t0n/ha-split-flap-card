@@ -11,6 +11,10 @@ class HASplitFlapCard extends HTMLElement {
     };
   }
 
+  static getConfigElement() {
+    return document.createElement("split-flap-card-editor");
+  }
+
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -544,7 +548,7 @@ class HASplitFlapCard extends HTMLElement {
       const flip = this._flipStates.get(index);
       const tile = document.createElement("div");
 
-      tile.className = `split-flap-tile${char === " " ? " space" : ""}${
+      tile.className = `split-flap-tile${!flip && char === " " ? " space" : ""}${
         flip ? " flipping" : ""
       }`;
 
@@ -655,7 +659,11 @@ class HASplitFlapCard extends HTMLElement {
     const themedConfig = { ...config };
 
     Object.entries(selectedTheme).forEach(([key, value]) => {
-      if (themedConfig[key] === undefined || themedConfig[key] === null || themedConfig[key] === "") {
+      if (
+        themedConfig[key] === undefined ||
+        themedConfig[key] === null ||
+        themedConfig[key] === ""
+      ) {
         themedConfig[key] = value;
       }
     });
@@ -1033,8 +1041,390 @@ class HASplitFlapCard extends HTMLElement {
   }
 }
 
+class HASplitFlapCardEditor extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    this._config = {};
+    this._hass = null;
+  }
+
+  set hass(hass) {
+    this._hass = hass;
+  }
+
+  setConfig(config) {
+    this._config = { ...config };
+    this._render();
+  }
+
+  _value(name, fallback = "") {
+    return this._config[name] ?? fallback;
+  }
+
+  _checked(name, fallback = false) {
+    const value = this._config[name];
+    return value === undefined ? fallback : Boolean(value);
+  }
+
+  _updateValue(name, value) {
+    const nextConfig = { ...this._config };
+
+    if (value === "" || value === undefined || value === null) {
+      delete nextConfig[name];
+    } else {
+      nextConfig[name] = value;
+    }
+
+    if (name === "source") {
+      if (value === "text") {
+        delete nextConfig.entity;
+        delete nextConfig.attribute;
+      } else if (value === "entity") {
+        delete nextConfig.text;
+      } else if (value === "clock") {
+        delete nextConfig.text;
+        delete nextConfig.entity;
+        delete nextConfig.attribute;
+      }
+    }
+
+    this._config = nextConfig;
+    this._fireConfigChanged();
+    this._render();
+  }
+
+  _updateNumber(name, value) {
+    if (value === "") {
+      this._updateValue(name, undefined);
+      return;
+    }
+
+    const number = Number(value);
+
+    if (Number.isFinite(number)) {
+      this._updateValue(name, number);
+    }
+  }
+
+  _updateBoolean(name, checked) {
+    this._updateValue(name, checked);
+  }
+
+  _fireConfigChanged() {
+    const event = new CustomEvent("config-changed", {
+      bubbles: true,
+      composed: true,
+      detail: {
+        config: this._config
+      }
+    });
+
+    this.dispatchEvent(event);
+  }
+
+  _render() {
+    const source = this._value("source", this._inferSource());
+    const theme = this._value("theme", "kiosk_gold");
+    const language = this._value("language", "sv");
+    const charset = this._value("charset", language);
+
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host {
+          display: block;
+        }
+
+        .editor {
+          display: grid;
+          gap: 14px;
+          padding: 4px 0 12px;
+        }
+
+        .row {
+          display: grid;
+          gap: 6px;
+        }
+
+        .grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 12px;
+        }
+
+        label {
+          color: var(--secondary-text-color);
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 0.02em;
+        }
+
+        input,
+        select {
+          box-sizing: border-box;
+          width: 100%;
+          min-height: 40px;
+          border: 1px solid var(--divider-color, #333);
+          border-radius: 8px;
+          padding: 8px 10px;
+          background: var(--card-background-color, #1c1c1c);
+          color: var(--primary-text-color, #fff);
+          font: inherit;
+        }
+
+        input[type="checkbox"] {
+          width: auto;
+          min-height: auto;
+        }
+
+        .check-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          min-height: 40px;
+        }
+
+        .hint {
+          color: var(--secondary-text-color);
+          font-size: 12px;
+          line-height: 1.35;
+        }
+
+        @media (max-width: 560px) {
+          .grid {
+            grid-template-columns: 1fr;
+          }
+        }
+      </style>
+
+      <div class="editor">
+        <div class="row">
+          <label for="source">Source</label>
+          <select id="source" data-field="source">
+            <option value="text"${source === "text" ? " selected" : ""}>text</option>
+            <option value="entity"${source === "entity" ? " selected" : ""}>entity</option>
+            <option value="clock"${source === "clock" ? " selected" : ""}>clock</option>
+          </select>
+        </div>
+
+        ${source === "text" ? this._renderTextFields() : ""}
+        ${source === "entity" ? this._renderEntityFields() : ""}
+        ${source === "clock" ? this._renderClockFields() : ""}
+
+        <div class="grid">
+          <div class="row">
+            <label for="language">Language</label>
+            <select id="language" data-field="language">
+              ${this._option("en", language)}
+              ${this._option("sv", language)}
+              ${this._option("nordic", language)}
+              ${this._option("western", language)}
+            </select>
+          </div>
+
+          <div class="row">
+            <label for="charset">Charset</label>
+            <select id="charset" data-field="charset">
+              ${this._option("", charset, "auto")}
+              ${this._option("en", charset)}
+              ${this._option("sv", charset)}
+              ${this._option("nordic", charset)}
+              ${this._option("western", charset)}
+              ${this._option("weather", charset)}
+              ${this._option("weather_sv", charset)}
+              ${this._option("extended", charset)}
+              ${this._option("custom", charset)}
+            </select>
+          </div>
+        </div>
+
+        ${
+          charset === "custom"
+            ? `<div class="row">
+                <label for="custom_charset">Custom charset</label>
+                <input id="custom_charset" data-field="custom_charset" value="${this._escapeAttribute(this._value("custom_charset", ""))}">
+              </div>`
+            : ""
+        }
+
+        <div class="grid">
+          <div class="row">
+            <label for="segments">Segments</label>
+            <input id="segments" data-number="segments" type="number" min="1" max="160" value="${this._escapeAttribute(this._value("segments", ""))}">
+          </div>
+
+          <div class="row">
+            <label for="theme">Theme</label>
+            <select id="theme" data-field="theme">
+              ${this._option("classic", theme)}
+              ${this._option("kiosk_gold", theme)}
+              ${this._option("classic_airport", theme)}
+              ${this._option("terminal_amber", theme)}
+              ${this._option("monochrome", theme)}
+            </select>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="row">
+            <label for="align">Align</label>
+            <select id="align" data-field="align">
+              ${this._option("left", this._value("align", "center"))}
+              ${this._option("center", this._value("align", "center"))}
+              ${this._option("right", this._value("align", "center"))}
+            </select>
+          </div>
+
+          <div class="row">
+            <label for="text_transform">Text transform</label>
+            <select id="text_transform" data-field="text_transform">
+              ${this._option("uppercase", this._value("text_transform", "uppercase"))}
+              ${this._option("lowercase", this._value("text_transform", "uppercase"))}
+              ${this._option("none", this._value("text_transform", "uppercase"))}
+            </select>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="check-row">
+            <input id="animation" data-boolean="animation" type="checkbox"${this._checked("animation", true) ? " checked" : ""}>
+            <label for="animation">Animation</label>
+          </div>
+
+          <div class="check-row">
+            <input id="cycle_chars" data-boolean="cycle_chars" type="checkbox"${this._checked("cycle_chars", true) ? " checked" : ""}>
+            <label for="cycle_chars">Cycle chars</label>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="row">
+            <label for="flip_duration">Flip duration</label>
+            <input id="flip_duration" data-number="flip_duration" type="number" min="80" max="2000" value="${this._escapeAttribute(this._value("flip_duration", ""))}">
+          </div>
+
+          <div class="row">
+            <label for="flip_stagger">Flip stagger</label>
+            <input id="flip_stagger" data-number="flip_stagger" type="number" min="0" max="500" value="${this._escapeAttribute(this._value("flip_stagger", ""))}">
+          </div>
+        </div>
+
+        <div class="hint">
+          Advanced styling options can still be edited directly in YAML.
+        </div>
+      </div>
+    `;
+
+    this._bindEvents();
+  }
+
+  _renderTextFields() {
+    return `
+      <div class="row">
+        <label for="text">Text</label>
+        <input id="text" data-field="text" value="${this._escapeAttribute(this._value("text", ""))}">
+      </div>
+    `;
+  }
+
+  _renderEntityFields() {
+    return `
+      <div class="row">
+        <label for="entity">Entity</label>
+        <input id="entity" data-field="entity" placeholder="input_text.split_flap_message" value="${this._escapeAttribute(this._value("entity", ""))}">
+      </div>
+
+      <div class="row">
+        <label for="attribute">Attribute</label>
+        <input id="attribute" data-field="attribute" placeholder="Optional" value="${this._escapeAttribute(this._value("attribute", ""))}">
+      </div>
+    `;
+  }
+
+  _renderClockFields() {
+    return `
+      <div class="grid">
+        <div class="row">
+          <label for="clock_format">Clock format</label>
+          <input id="clock_format" data-field="clock_format" value="${this._escapeAttribute(this._value("clock_format", "HH:mm"))}">
+        </div>
+
+        <div class="row">
+          <label for="clock_tick_interval">Clock tick interval</label>
+          <input id="clock_tick_interval" data-number="clock_tick_interval" type="number" min="250" max="60000" value="${this._escapeAttribute(this._value("clock_tick_interval", 1000))}">
+        </div>
+      </div>
+    `;
+  }
+
+  _bindEvents() {
+    this.shadowRoot.querySelectorAll("[data-field]").forEach((element) => {
+      element.addEventListener("change", () => {
+        const field = element.getAttribute("data-field");
+        this._updateValue(field, element.value);
+      });
+
+      if (element.tagName === "INPUT") {
+        element.addEventListener("input", () => {
+          const field = element.getAttribute("data-field");
+          this._updateValue(field, element.value);
+        });
+      }
+    });
+
+    this.shadowRoot.querySelectorAll("[data-number]").forEach((element) => {
+      element.addEventListener("change", () => {
+        const field = element.getAttribute("data-number");
+        this._updateNumber(field, element.value);
+      });
+
+      element.addEventListener("input", () => {
+        const field = element.getAttribute("data-number");
+        this._updateNumber(field, element.value);
+      });
+    });
+
+    this.shadowRoot.querySelectorAll("[data-boolean]").forEach((element) => {
+      element.addEventListener("change", () => {
+        const field = element.getAttribute("data-boolean");
+        this._updateBoolean(field, element.checked);
+      });
+    });
+  }
+
+  _inferSource() {
+    if (this._config.source) return this._config.source;
+    if (this._config.entity) return "entity";
+    if (this._config.clock || this._config.clock_format) return "clock";
+    return "text";
+  }
+
+  _option(value, selected, label = value) {
+    return `<option value="${this._escapeAttribute(value)}"${
+      value === selected ? " selected" : ""
+    }>${this._escapeHtml(label)}</option>`;
+  }
+
+  _escapeHtml(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  _escapeAttribute(value) {
+    return this._escapeHtml(value);
+  }
+}
+
 if (!customElements.get("split-flap-card")) {
   customElements.define("split-flap-card", HASplitFlapCard);
+}
+
+if (!customElements.get("split-flap-card-editor")) {
+  customElements.define("split-flap-card-editor", HASplitFlapCardEditor);
 }
 
 window.customCards = window.customCards || [];
@@ -1042,5 +1432,6 @@ window.customCards.push({
   type: "split-flap-card",
   name: "Split-Flap Card",
   preview: true,
-  description: "Display text, entity states or a clock as a classic split-flap display."
+  description: "Display text, entity states or a clock as a classic split-flap display.",
+  documentationURL: "https://github.com/ph13t0n/ha-split-flap-card"
 });
