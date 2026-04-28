@@ -1,0 +1,12 @@
+{
+  "name": "ha-split-flap-card",
+  "version": "0.1.0-alpha.1",
+  "description": "A split-flap display card for Home Assistant dashboards.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "check": "npm run check:src && npm run check:dist",
+    "check:src": "node --check src/ha-split-flap-card.js",
+    "check:dist": "node --check dist/ha-split-flap-card.js"
+  }
+}
