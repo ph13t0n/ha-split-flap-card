@@ -206,4 +206,14 @@ When reporting an issue, include:
 
 ## License
 
-MIT
+This project is licensed under the MIT License.
+
+Copyright © 2026 Per Lif Arvidsson (ph13t0n).
+
+See [LICENSE](./LICENSE) for details.
+
+## Commercial support
+
+This project is open source under the MIT License.
+
+Commercial support, custom development, branding, theme adaptation and implementation assistance may be offered separately by agreement.
