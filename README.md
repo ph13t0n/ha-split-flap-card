@@ -91,6 +91,15 @@ url: /hacsfiles/ha-split-flap-card/ha-split-flap-card.js
 type: module
 ```
 
+## Support
+
+This is a hobby project built while learning more about Home Assistant, smart homes, code, and dashboards.
+
+If you find it useful and want to support continued development, you can leave a small tip on Ko-fi:
+
+[![Support me on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/lifarvidsson)
+
+
 ## Basic usage
 
 ```yaml
