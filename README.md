@@ -217,3 +217,5 @@ See [LICENSE](./LICENSE) for details.
 This project is open source under the MIT License.
 
 Commercial support, custom development, branding, theme adaptation and implementation assistance may be offered separately by agreement.
+
+For business inquiries, contact [hej@lifarvidsson.se](mailto:hej@lifarvidsson.se?subject=Business%20inquiry) with the subject line `Business inquiry`.
