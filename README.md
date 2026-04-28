@@ -91,7 +91,7 @@ url: /hacsfiles/ha-split-flap-card/ha-split-flap-card.js
 type: module
 ```
 
-## Support
+## Optional support
 
 This is a hobby project built while learning more about Home Assistant, smart homes, code, and dashboards.
 
@@ -201,7 +201,7 @@ It does not:
 
 Avoid sharing screenshots or YAML containing private entity names, tokens, addresses or private URLs.
 
-## Support
+## Reporting issues
 
 When reporting an issue, include:
 
