@@ -1,6 +1,6 @@
 # Split-Flap Card for Home Assistant
 
-![Split-Flap Card preview](preview.svg)
+![Split-Flap Card preview](./docs/images/social-preview.jpg)
 
 ## Notice
 
@@ -192,3 +192,17 @@ When reporting an issue, include:
 ## License
 
 MIT
+
+## Preview examples
+
+<p align="center">
+  <img src="./docs/images/tablet_mockup.jpg" alt="Split-Flap Card tablet mockup" width="100%">
+</p>
+
+<p align="center">
+  <img src="./docs/images/tv_mockup.jpg" alt="Split-Flap Card TV mockup" width="100%">
+</p>
+
+<p align="center">
+  <img src="./docs/images/waitroom_mockup.jpg" alt="Split-Flap Card waiting room mockup" width="100%">
+</p>
