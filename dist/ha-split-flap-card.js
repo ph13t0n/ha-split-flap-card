@@ -3,8 +3,9 @@ class HASplitFlapCard extends HTMLElement {
     return {
       text: "NÄSSJÖ CENTRAL",
       language: "sv",
+      charset: "sv",
       theme: "kiosk_gold",
-      max_chars: 14,
+      segments: 14,
       animation: true,
       cycle_chars: true
     };
@@ -20,22 +21,41 @@ class HASplitFlapCard extends HTMLElement {
     this._displayChars = [];
     this._flipStates = new Map();
     this._timers = [];
+    this._clockTimer = null;
     this._runId = 0;
     this._hasRenderedOnce = false;
   }
 
   setConfig(config) {
-    if (!config.text && !config.entity) {
-      throw new Error("You need to define either text or entity.");
+    if (!config || typeof config !== "object") {
+      throw new Error("Invalid configuration.");
+    }
+
+    const source = config.source || this._inferSource(config);
+
+    if (source === "text" && config.text === undefined) {
+      throw new Error("Text source requires 'text'.");
+    }
+
+    if (source === "entity" && !config.entity) {
+      throw new Error("Entity source requires 'entity'.");
+    }
+
+    if (!["text", "entity", "clock"].includes(source)) {
+      throw new Error("Source must be one of: text, entity, clock.");
     }
 
     this._config = {
+      source,
+
       language: "en",
       charset: undefined,
       locale: undefined,
 
       text_transform: "uppercase",
       fallback_character: " ",
+      pad_character: " ",
+      pad_mode: "end",
 
       theme: "classic",
 
@@ -60,6 +80,8 @@ class HASplitFlapCard extends HTMLElement {
       segment_radius: 6,
 
       max_chars: undefined,
+      segments: undefined,
+      max_segments: 96,
       align: "center",
 
       animation: true,
@@ -70,9 +92,14 @@ class HASplitFlapCard extends HTMLElement {
       flip_duration: 520,
       flip_stagger: 45,
 
-      ...config
+      clock_format: "HH:mm",
+      clock_tick_interval: 1000,
+
+      ...config,
+      source
     };
 
+    this._restartClockIfNeeded();
     this._syncText(true);
   }
 
@@ -83,6 +110,7 @@ class HASplitFlapCard extends HTMLElement {
 
   disconnectedCallback() {
     this._clearTimers();
+    this._stopClock();
   }
 
   getCardSize() {
@@ -97,12 +125,50 @@ class HASplitFlapCard extends HTMLElement {
     };
   }
 
+  _inferSource(config) {
+    if (config.source) return config.source;
+    if (config.entity) return "entity";
+    if (config.clock || config.clock_format) return "clock";
+    return "text";
+  }
+
+  _restartClockIfNeeded() {
+    this._stopClock();
+
+    if (!this._config || this._config.source !== "clock") {
+      return;
+    }
+
+    const interval = this._safeNumber(
+      this._config.clock_tick_interval,
+      1000,
+      250,
+      60000
+    );
+
+    this._clockTimer = window.setInterval(() => {
+      this._syncText(false);
+    }, interval);
+  }
+
+  _stopClock() {
+    if (this._clockTimer) {
+      window.clearInterval(this._clockTimer);
+      this._clockTimer = null;
+    }
+  }
+
   _getCharsets() {
     return {
       en: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -:.",
       sv: "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ0123456789 -:.",
       nordic: "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖÆØ0123456789 -:.",
-      western: "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖÆØÜÉÈÀÁÂÃÇÑÓÒÔÕÚÙÛÍÌÎÏÊËŒ0123456789 -:."
+      western:
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖÆØÜÉÈÀÁÂÃÇÑÓÒÔÕÚÙÛÍÌÎÏÊËŒ0123456789 -:.",
+      weather: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -:.,°/+",
+      weather_sv: "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ0123456789 -:.,°/+",
+      extended:
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖÆØÜÉÈÀÁÂÃÇÑÓÒÔÕÚÙÛÍÌÎÏÊËŒ0123456789 -:.,°/+_()[]"
     };
   }
 
@@ -111,7 +177,7 @@ class HASplitFlapCard extends HTMLElement {
     const key = config.charset || config.language || "en";
 
     if (key === "custom") {
-      return config.custom_charset || this._getCharsets().en;
+      return String(config.custom_charset || this._getCharsets().en);
     }
 
     return this._getCharsets()[key] || this._getCharsets().en;
@@ -120,8 +186,12 @@ class HASplitFlapCard extends HTMLElement {
   _getRawText() {
     const config = this._config || {};
 
-    if (config.text !== undefined) {
-      return String(config.text);
+    if (config.source === "clock") {
+      return this._formatClock(config.clock_format);
+    }
+
+    if (config.source === "text" || config.text !== undefined) {
+      return String(config.text ?? "");
     }
 
     if (!this._hass || !config.entity) {
@@ -142,6 +212,27 @@ class HASplitFlapCard extends HTMLElement {
     return String(stateObj.state);
   }
 
+  _formatClock(format) {
+    const now = new Date();
+
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+
+    const values = {
+      HH: String(hours).padStart(2, "0"),
+      H: String(hours),
+      mm: String(minutes).padStart(2, "0"),
+      ss: String(seconds).padStart(2, "0")
+    };
+
+    return String(format || "HH:mm")
+      .replaceAll("HH", values.HH)
+      .replaceAll("H", values.H)
+      .replaceAll("mm", values.mm)
+      .replaceAll("ss", values.ss);
+  }
+
   _normalizeText(text) {
     const config = this._config || {};
     let output = text || "";
@@ -153,7 +244,8 @@ class HASplitFlapCard extends HTMLElement {
     }
 
     const charset = this._getCharset();
-    const fallback = config.fallback_character ?? " ";
+    const fallback = this._getSafeFallbackCharacter();
+    const padCharacter = this._getSafePadCharacter();
 
     output = Array.from(output)
       .map((char) => {
@@ -166,68 +258,105 @@ class HASplitFlapCard extends HTMLElement {
       })
       .join("");
 
-    if (config.max_chars && Number(config.max_chars) > 0) {
-      const max = Number(config.max_chars);
-      output = output.slice(0, max).padEnd(max, " ");
+    const segmentCount = this._getSegmentCount(output.length);
+
+    if (segmentCount > 0) {
+      output = output.slice(0, segmentCount);
+
+      if (config.pad_mode === "start") {
+        output = output.padStart(segmentCount, padCharacter);
+      } else {
+        output = output.padEnd(segmentCount, padCharacter);
+      }
     }
 
     return output;
   }
 
+  _getSegmentCount(textLength) {
+    const config = this._config || {};
+    const configured = config.segments ?? config.max_chars;
+    const maxSegments = this._safeNumber(config.max_segments, 96, 1, 160);
+
+    if (configured === undefined || configured === null || configured === "") {
+      return Math.min(Math.max(textLength, 1), maxSegments);
+    }
+
+    const count = Number(configured);
+
+    if (!Number.isFinite(count) || count <= 0) {
+      return Math.min(Math.max(textLength, 1), maxSegments);
+    }
+
+    return Math.min(Math.floor(count), maxSegments);
+  }
+
+  _getSafeFallbackCharacter() {
+    const config = this._config || {};
+    const value = String(config.fallback_character ?? " ");
+    return Array.from(value)[0] || " ";
+  }
+
+  _getSafePadCharacter() {
+    const config = this._config || {};
+    const value = String(config.pad_character ?? " ");
+    return Array.from(value)[0] || " ";
+  }
+
   _mapCharacter(char) {
     const map = {
-      "é": "e",
-      "è": "e",
-      "ê": "e",
-      "ë": "e",
-      "É": "E",
-      "È": "E",
-      "Ê": "E",
-      "Ë": "E",
+      é: "e",
+      è: "e",
+      ê: "e",
+      ë: "e",
+      É: "E",
+      È: "E",
+      Ê: "E",
+      Ë: "E",
 
-      "á": "a",
-      "à": "a",
-      "â": "a",
-      "ã": "a",
-      "Á": "A",
-      "À": "A",
-      "Â": "A",
-      "Ã": "A",
+      á: "a",
+      à: "a",
+      â: "a",
+      ã: "a",
+      Á: "A",
+      À: "A",
+      Â: "A",
+      Ã: "A",
 
-      "ó": "o",
-      "ò": "o",
-      "ô": "o",
-      "õ": "o",
-      "Ó": "O",
-      "Ò": "O",
-      "Ô": "O",
-      "Õ": "O",
+      ó: "o",
+      ò: "o",
+      ô: "o",
+      õ: "o",
+      Ó: "O",
+      Ò: "O",
+      Ô: "O",
+      Õ: "O",
 
-      "ú": "u",
-      "ù": "u",
-      "û": "u",
-      "Ú": "U",
-      "Ù": "U",
-      "Û": "U",
+      ú: "u",
+      ù: "u",
+      û: "u",
+      Ú: "U",
+      Ù: "U",
+      Û: "U",
 
-      "í": "i",
-      "ì": "i",
-      "î": "i",
-      "ï": "i",
-      "Í": "I",
-      "Ì": "I",
-      "Î": "I",
-      "Ï": "I",
+      í: "i",
+      ì: "i",
+      î: "i",
+      ï: "i",
+      Í: "I",
+      Ì: "I",
+      Î: "I",
+      Ï: "I",
 
-      "ç": "c",
-      "Ç": "C",
-      "ñ": "n",
-      "Ñ": "N",
+      ç: "c",
+      Ç: "C",
+      ñ: "n",
+      Ñ: "N",
 
-      "æ": "ä",
-      "Æ": "Ä",
-      "ø": "ö",
-      "Ø": "Ö"
+      æ: "ä",
+      Æ: "Ä",
+      ø: "ö",
+      Ø: "Ö"
     };
 
     return map[char];
@@ -255,7 +384,11 @@ class HASplitFlapCard extends HTMLElement {
 
     if (!this._hasRenderedOnce) {
       this._hasRenderedOnce = true;
-      const start = this._config.initial_animation ? " ".repeat(nextText.length) : nextText;
+
+      const start = this._config.initial_animation
+        ? " ".repeat(nextText.length)
+        : nextText;
+
       this._displayChars = Array.from(start);
       this._render();
 
@@ -275,16 +408,18 @@ class HASplitFlapCard extends HTMLElement {
     const runId = ++this._runId;
     const config = this._config;
     const toChars = Array.from(toText);
-    const fromChars = Array.from(this._displayChars.join("").padEnd(toChars.length, " ")).slice(0, toChars.length);
+    const fromChars = Array.from(
+      this._displayChars.join("").padEnd(toChars.length, " ")
+    ).slice(0, toChars.length);
 
     this._displayChars = fromChars;
     this._flipStates.clear();
     this._render();
 
-    const flipDuration = Number(config.flip_duration) || 520;
-    const flipStagger = Number(config.flip_stagger) || 45;
+    const flipDuration = this._safeNumber(config.flip_duration, 520, 80, 2000);
+    const flipStagger = this._safeNumber(config.flip_stagger, 45, 0, 500);
     const stepDelay = flipDuration + 70;
-    const cycleCount = Math.max(0, Number(config.cycle_count) || 0);
+    const cycleCount = this._safeNumber(config.cycle_count, 2, 0, 5);
 
     let lastDelay = 0;
 
@@ -293,7 +428,12 @@ class HASplitFlapCard extends HTMLElement {
 
       if (startChar === targetChar) return;
 
-      const sequence = this._buildSequence(startChar, targetChar, index, cycleCount);
+      const sequence = this._buildSequence(
+        startChar,
+        targetChar,
+        index,
+        cycleCount
+      );
 
       sequence.forEach((char, stepIndex) => {
         const delay = index * flipStagger + stepIndex * stepDelay;
@@ -321,13 +461,17 @@ class HASplitFlapCard extends HTMLElement {
   _buildSequence(fromChar, targetChar, index, cycleCount) {
     const config = this._config || {};
 
-    if (!config.cycle_chars || cycleCount <= 0) {
+    if (!config.cycle_chars || cycleCount <= 0 || config.source === "clock") {
       return [targetChar];
     }
 
     const charset = Array.from(this._getCharset()).filter((char) => {
       return char !== " " && char !== "-" && char !== ":" && char !== ".";
     });
+
+    if (!charset.length) {
+      return [targetChar];
+    }
 
     const sequence = [];
 
@@ -361,11 +505,13 @@ class HASplitFlapCard extends HTMLElement {
 
     this._render();
 
+    const duration = this._safeNumber(this._config.flip_duration, 520, 80, 2000);
+
     const timer = window.setTimeout(() => {
       this._displayChars[index] = toChar;
       this._flipStates.delete(index);
       this._render();
-    }, Number(this._config.flip_duration) + 40);
+    }, duration + 40);
 
     this._timers.push(timer);
   }
@@ -397,7 +543,10 @@ class HASplitFlapCard extends HTMLElement {
     chars.forEach((char, index) => {
       const flip = this._flipStates.get(index);
       const tile = document.createElement("div");
-      tile.className = `split-flap-tile${char === " " ? " space" : ""}${flip ? " flipping" : ""}`;
+
+      tile.className = `split-flap-tile${char === " " ? " space" : ""}${
+        flip ? " flipping" : ""
+      }`;
 
       if (flip) {
         tile.setAttribute("data-flip-key", flip.key);
@@ -463,38 +612,94 @@ class HASplitFlapCard extends HTMLElement {
   }
 
   _applyTheme(config) {
-    if (config.theme === "kiosk_gold") {
-      return {
-        ...config,
-        card_background: config.card_background || "#050505",
-        segment_background: config.segment_background || "#111111",
-        segment_background_top: config.segment_background_top || "#1b1b1b",
-        segment_background_bottom: config.segment_background_bottom || "#090909",
-        text_color: config.text_color || "#dcb215"
-      };
-    }
+    const themes = {
+      kiosk_gold: {
+        card_background: "#050505",
+        segment_background: "#111111",
+        segment_background_top: "#1b1b1b",
+        segment_background_bottom: "#090909",
+        segment_separator_color: "#000000",
+        segment_border_color: "#2a2a2a",
+        text_color: "#dcb215"
+      },
+      classic_airport: {
+        card_background: "#0a0a0a",
+        segment_background: "#151515",
+        segment_background_top: "#202020",
+        segment_background_bottom: "#0c0c0c",
+        segment_separator_color: "#000000",
+        segment_border_color: "#2a2a2a",
+        text_color: "#f5f5f5"
+      },
+      terminal_amber: {
+        card_background: "#050300",
+        segment_background: "#120c02",
+        segment_background_top: "#1f1504",
+        segment_background_bottom: "#090501",
+        segment_separator_color: "#000000",
+        segment_border_color: "#33240a",
+        text_color: "#ffb000"
+      },
+      monochrome: {
+        card_background: "#111111",
+        segment_background: "#1a1a1a",
+        segment_background_top: "#242424",
+        segment_background_bottom: "#0d0d0d",
+        segment_separator_color: "#000000",
+        segment_border_color: "#333333",
+        text_color: "#f2f2f2"
+      }
+    };
 
-    if (config.theme === "classic_airport") {
-      return {
-        ...config,
-        card_background: config.card_background || "#0a0a0a",
-        segment_background: config.segment_background || "#151515",
-        segment_background_top: config.segment_background_top || "#202020",
-        segment_background_bottom: config.segment_background_bottom || "#0c0c0c",
-        text_color: config.text_color || "#f5f5f5"
-      };
-    }
+    const selectedTheme = themes[config.theme] || {};
+    const themedConfig = { ...config };
 
-    return config;
+    Object.entries(selectedTheme).forEach(([key, value]) => {
+      if (themedConfig[key] === undefined || themedConfig[key] === null || themedConfig[key] === "") {
+        themedConfig[key] = value;
+      }
+    });
+
+    return themedConfig;
   }
 
   _getStyles(config) {
-    const width = Number(config.segment_width) || 48;
-    const height = Number(config.segment_height) || 72;
-    const radius = Number(config.segment_radius) || 6;
-    const fontSize = Number(config.font_size) || 44;
-    const gap = Number(config.segment_gap) || 6;
-    const flipDuration = Number(config.flip_duration) || 520;
+    const width = this._safeNumber(config.segment_width, 48, 8, 160);
+    const height = this._safeNumber(config.segment_height, 72, 16, 220);
+    const radius = this._safeNumber(config.segment_radius, 6, 0, 40);
+    const fontSize = this._safeNumber(config.font_size, 44, 8, 140);
+    const gap = this._safeNumber(config.segment_gap, 6, 0, 40);
+    const flipDuration = this._safeNumber(config.flip_duration, 520, 80, 2000);
+
+    const cardBackground = this._safeColor(config.card_background, "#050505");
+    const segmentBackground = this._safeColor(config.segment_background, "#111111");
+    const segmentBackgroundTop = this._safeColor(
+      config.segment_background_top,
+      "#1b1b1b"
+    );
+    const segmentBackgroundBottom = this._safeColor(
+      config.segment_background_bottom,
+      "#090909"
+    );
+    const separatorColor = this._safeColor(
+      config.segment_separator_color,
+      "#000000"
+    );
+    const borderColor = this._safeColor(config.segment_border_color, "#2a2a2a");
+    const textColor = this._safeColor(config.text_color, "#dcb215");
+
+    const cardBorderRadius = this._safeNumber(
+      config.card_border_radius,
+      16,
+      0,
+      60
+    );
+    const cardPadding = this._safeNumber(config.card_padding, 16, 0, 80);
+    const fontFamily = this._safeFontFamily(
+      config.font_family,
+      "Roboto Mono, monospace"
+    );
+    const fontWeight = this._safeFontWeight(config.font_weight, 800);
 
     return `
       :host {
@@ -502,9 +707,9 @@ class HASplitFlapCard extends HTMLElement {
       }
 
       ha-card {
-        background: ${config.card_background};
-        border-radius: ${Number(config.card_border_radius) || 16}px;
-        padding: ${Number(config.card_padding) || 16}px;
+        background: ${cardBackground};
+        border-radius: ${cardBorderRadius}px;
+        padding: ${cardPadding}px;
         box-sizing: border-box;
         overflow: hidden;
       }
@@ -530,13 +735,13 @@ class HASplitFlapCard extends HTMLElement {
         min-width: var(--segment-width);
 
         border-radius: ${radius}px;
-        background: ${config.segment_background};
-        border: 1px solid ${config.segment_border_color};
+        background: ${segmentBackground};
+        border: 1px solid ${borderColor};
 
-        color: ${config.text_color};
-        font-family: ${config.font_family};
+        color: ${textColor};
+        font-family: ${fontFamily};
         font-size: ${fontSize}px;
-        font-weight: ${config.font_weight};
+        font-weight: ${fontWeight};
         line-height: var(--segment-height);
         text-align: center;
 
@@ -578,14 +783,14 @@ class HASplitFlapCard extends HTMLElement {
       .static-top,
       .leaf-front {
         top: 0;
-        background: ${config.segment_background_top};
+        background: ${segmentBackgroundTop};
         border-radius: ${radius}px ${radius}px 0 0;
       }
 
       .static-bottom,
       .leaf-back {
         bottom: 0;
-        background: ${config.segment_background_bottom};
+        background: ${segmentBackgroundBottom};
         border-radius: 0 0 ${radius}px ${radius}px;
       }
 
@@ -597,7 +802,7 @@ class HASplitFlapCard extends HTMLElement {
         height: var(--segment-height);
         line-height: var(--segment-height);
         text-align: center;
-        color: ${config.text_color};
+        color: ${textColor};
         text-shadow:
           0 2px 0 rgba(0,0,0,0.9),
           0 0 8px rgba(220,178,21,0.12);
@@ -664,7 +869,7 @@ class HASplitFlapCard extends HTMLElement {
         right: 0;
         top: calc(50% - 2px);
         height: 4px;
-        background: ${config.segment_separator_color};
+        background: ${separatorColor};
         z-index: 20;
         box-shadow:
           0 1px 0 rgba(255,255,255,0.08),
@@ -759,6 +964,65 @@ class HASplitFlapCard extends HTMLElement {
     return "center";
   }
 
+  _safeNumber(value, fallback, min, max) {
+    const number = Number(value);
+
+    if (!Number.isFinite(number)) {
+      return fallback;
+    }
+
+    return Math.min(Math.max(number, min), max);
+  }
+
+  _safeColor(value, fallback) {
+    const input = String(value ?? "").trim();
+
+    if (
+      /^#[0-9a-fA-F]{3,8}$/.test(input) ||
+      /^rgb\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\)$/.test(input) ||
+      /^rgba\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*(0|1|0?\.\d+)\s*\)$/.test(input) ||
+      /^var\(--[a-zA-Z0-9_-]+\)$/.test(input)
+    ) {
+      return input;
+    }
+
+    return fallback;
+  }
+
+  _safeFontFamily(value, fallback) {
+    const input = String(value ?? "").trim();
+
+    if (!input) {
+      return fallback;
+    }
+
+    if (/url\s*\(|expression\s*\(|javascript:/i.test(input)) {
+      return fallback;
+    }
+
+    if (!/^[a-zA-Z0-9åäöÅÄÖæøÆØéÉèÈêÊëË\s'",._-]+$/.test(input)) {
+      return fallback;
+    }
+
+    return input;
+  }
+
+  _safeFontWeight(value, fallback) {
+    const input = String(value ?? "").trim();
+
+    if (/^(normal|bold|lighter|bolder)$/.test(input)) {
+      return input;
+    }
+
+    const number = Number(input);
+
+    if (!Number.isFinite(number)) {
+      return fallback;
+    }
+
+    return Math.min(Math.max(Math.round(number), 100), 1000);
+  }
+
   _escapeHtml(value) {
     return String(value)
       .replaceAll("&", "&amp;")
@@ -769,12 +1033,14 @@ class HASplitFlapCard extends HTMLElement {
   }
 }
 
-customElements.define("split-flap-card", HASplitFlapCard);
+if (!customElements.get("split-flap-card")) {
+  customElements.define("split-flap-card", HASplitFlapCard);
+}
 
 window.customCards = window.customCards || [];
 window.customCards.push({
   type: "split-flap-card",
   name: "Split-Flap Card",
   preview: true,
-  description: "Display text or entity states as a classic split-flap display."
+  description: "Display text, entity states or a clock as a classic split-flap display."
 });
