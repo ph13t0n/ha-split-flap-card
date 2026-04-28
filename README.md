@@ -55,3 +55,138 @@ Split-Flap Card is a Home Assistant Lovelace custom card that renders static tex
 
 ```text
 https://github.com/ph13t0n/ha-split-flap-card
+```
+
+4. Select category:
+
+```text
+Dashboard
+```
+
+5. Click **Add**.
+6. Install **Split-Flap Card**.
+7. Refresh your browser.
+
+Expected HACS resource:
+
+```yaml
+url: /hacsfiles/ha-split-flap-card/ha-split-flap-card.js
+type: module
+```
+
+## Basic usage
+
+```yaml
+type: custom:split-flap-card
+text: CENTRAL STATION
+segments: 16
+theme: kiosk_gold
+```
+
+## Swedish example
+
+```yaml
+type: custom:split-flap-card
+text: NÄSSJÖ CENTRAL
+language: sv
+charset: sv
+segments: 14
+theme: kiosk_gold
+```
+
+## Entity example
+
+```yaml
+type: custom:split-flap-card
+source: entity
+entity: input_text.split_flap_message
+language: sv
+charset: sv
+segments: 24
+theme: kiosk_gold
+```
+
+## Attribute example
+
+```yaml
+type: custom:split-flap-card
+source: entity
+entity: weather.home
+attribute: temperature
+charset: weather
+segments: 6
+theme: kiosk_gold
+```
+
+## Clock example
+
+```yaml
+type: custom:split-flap-card
+source: clock
+clock_format: HH:mm:ss
+clock_tick_interval: 1000
+charset: custom
+custom_charset: " 0123456789:"
+segments: 8
+theme: kiosk_gold
+cycle_chars: false
+```
+
+## Configuration
+
+| Option | Type | Default | Description |
+|---|---:|---|---|
+| `source` | string | inferred | `text`, `entity`, or `clock` |
+| `text` | string | — | Static text to display |
+| `entity` | string | — | Entity state to display |
+| `attribute` | string | — | Entity attribute to display |
+| `clock_format` | string | `HH:mm` | Clock format using `HH`, `H`, `mm`, `ss` |
+| `clock_tick_interval` | number | `1000` | Clock update interval in milliseconds |
+| `language` | string | `en` | Language hint |
+| `charset` | string | language value | `en`, `sv`, `nordic`, `western`, `weather`, `weather_sv`, `extended`, `custom` |
+| `custom_charset` | string | — | Custom charset when using `charset: custom` |
+| `text_transform` | string | `uppercase` | `uppercase`, `lowercase`, or unchanged |
+| `fallback_character` | string | space | Character used when input is unsupported |
+| `pad_character` | string | space | Character used to pad empty segments |
+| `pad_mode` | string | `end` | `start` or `end` |
+| `segments` | number | text length | Number of displayed segments |
+| `max_chars` | number | — | Legacy alias for `segments` |
+| `max_segments` | number | `96` | Safety limit for segment count |
+| `theme` | string | `classic` | Built-in theme |
+| `align` | string | `center` | `left`, `center`, or `right` |
+| `animation` | boolean | `true` | Enable split-flap animation |
+| `initial_animation` | boolean | `true` | Animate from blank on first render |
+| `cycle_chars` | boolean | `true` | Show intermediate characters |
+| `cycle_count` | number | `2` | Number of intermediate characters |
+| `flip_duration` | number | `520` | Flip duration in ms |
+| `flip_stagger` | number | `45` | Delay between segment flips in ms |
+
+## Security
+
+This is a frontend-only dashboard card.
+
+It does not:
+
+- Store credentials
+- Call external APIs
+- Require Home Assistant long-lived access tokens
+- Modify Home Assistant configuration
+- Create entities or services
+
+Avoid sharing screenshots or YAML containing private entity names, tokens, addresses or private URLs.
+
+## Support
+
+When reporting an issue, include:
+
+- Home Assistant version
+- HACS version
+- Browser/device
+- Installation method
+- Full YAML configuration
+- Screenshot or screen recording
+- Browser console errors
+
+## License
+
+MIT
