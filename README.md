@@ -17,7 +17,8 @@ Split-Flap Card is a Home Assistant Lovelace custom card that renders static tex
 - Static text
 - Entity state
 - Entity attribute
-- Built-in browser clock
+- Browser clock mode
+- Basic visual editor
 - Mechanical split-flap animation
 - `segments` and `max_chars`
 - Swedish charset support with `Å`, `Ä`, `Ö`
@@ -40,10 +41,11 @@ Split-Flap Card is a Home Assistant Lovelace custom card that renders static tex
 
 - Auto-paging
 - MDI icon token rendering
-- Visual editor
+- Advanced visual editor layout
 - Google Font loader
 - Custom font URL loader
 - Advanced flip modes such as `shortest` and `direct`
+
 
 ## Installation
 
