@@ -34,7 +34,7 @@ Custom repositories
 Add the GitHub repository URL:
 
 ```text
-https://github.com/YOUR_GITHUB_USERNAME/ha-split-flap-card
+https://github.com/ph13t0n/ha-split-flap-card
 ```
 
 Select category:
