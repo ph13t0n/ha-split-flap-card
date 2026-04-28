@@ -8,6 +8,21 @@ This project is currently in alpha.
 
 The configuration API may change before `v1.0.0`.
 
+## Preview examples
+
+<p align="center">
+  <img src="./docs/images/tablet_mockup.jpg" alt="Split-Flap Card tablet mockup" width="100%">
+</p>
+
+<p align="center">
+  <img src="./docs/images/tv_mockup.jpg" alt="Split-Flap Card TV mockup" width="100%">
+</p>
+
+<p align="center">
+  <img src="./docs/images/waitroom_mockup.jpg" alt="Split-Flap Card waiting room mockup" width="100%">
+</p>
+
+
 ## Overview
 
 Split-Flap Card is a Home Assistant Lovelace custom card that renders static text, entity states, entity attributes and a browser-based clock as a mechanical split-flap display.
@@ -192,17 +207,3 @@ When reporting an issue, include:
 ## License
 
 MIT
-
-## Preview examples
-
-<p align="center">
-  <img src="./docs/images/tablet_mockup.jpg" alt="Split-Flap Card tablet mockup" width="100%">
-</p>
-
-<p align="center">
-  <img src="./docs/images/tv_mockup.jpg" alt="Split-Flap Card TV mockup" width="100%">
-</p>
-
-<p align="center">
-  <img src="./docs/images/waitroom_mockup.jpg" alt="Split-Flap Card waiting room mockup" width="100%">
-</p>
