@@ -2,7 +2,7 @@
 
 A Home Assistant dashboard card that renders text, entity states, entity attributes and a browser-based clock as a mechanical split-flap display.
 
-![Split-Flap Card preview](preview.svg)
+![Split-Flap Card preview](./docs/images/social-preview.jpg)
 
 ## Current alpha features
 
