@@ -19,28 +19,42 @@ v1.0.0
 
 ### Added
 
-- Initial documentation structure.
-- Installation guide.
-- Configuration guide.
-- Examples guide.
-- Charset documentation.
-- Icon token documentation.
-- Theme documentation.
-- Visual editor documentation.
-- Troubleshooting guide.
-- FAQ.
-- HACS documentation.
-- Development guide.
-- Roadmap.
-- Release notes guide.
-- Credits and inspiration documentation.
-- Privacy and public examples guide.
-- Support guide.
+- Nothing yet.
 
 ### Changed
 
-- Public examples changed to generic names and placeholder entities.
-- Documentation now avoids private, personal, or location-specific examples.
+- Nothing yet.
+
+---
+
+## v0.1.0-alpha.2
+
+Workflow, documentation and preparation release for the `mechanical_gold` visual direction.
+
+### Added
+
+- Added pull request template with version impact, changelog categories and standing context checklist.
+- Added commit message template for structured local commits.
+- Added README links to standing project context and changelog.
+- Added README examples for `mechanical_gold`.
+
+### Changed
+
+- Bumped package version to `0.1.0-alpha.2`.
+- Updated README theme documentation to include `mechanical_gold`.
+- Clarified that future updates should keep `src` and `dist` aligned.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+### Replaced
+
+- Nothing.
 
 ---
 
