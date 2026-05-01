@@ -56,7 +56,7 @@ Split-Flap Card should avoid directly copying another project’s code or propri
 
 ## UI editor requirements
 
-The Home Assistant visual editor should be logical, compact and easy to use while still allowing advanced configuration.
+The Home Assistant visual editor should be logical, compact, responsive and easy to use while still allowing advanced configuration.
 
 Core requirements:
 
@@ -72,18 +72,29 @@ Core requirements:
 - Do not remove unknown YAML keys from the user configuration.
 - Advanced options should exist, but should not overwhelm the default editor view.
 - Help links marked with `?` should link to the relevant GitHub documentation/manual section.
+- The editor should feel as polished as the card itself; color, form and experience should be consistent.
 
 Recommended grouping:
 
-1. Content
-2. Source
+1. Preview
+2. Content
 3. Display
 4. Theme
 5. Typography
-6. Segments
+6. Flap slots
 7. Animation
 8. Advanced
-9. Support
+9. Manual & Help
+
+Recommended terminology:
+
+- Use `Content` / `Innehåll` instead of `Source` as a visible section heading.
+- Use `What should the card show?` / `Vad ska kortet visa?` for the source selector.
+- Use `Entity / Sensor` / `Entitet / sensor` instead of `Entity` alone.
+- Use `Flap slots` / `Teckenrutor` instead of `Segments` in the standard editor.
+- Use `Manual & Help` / `Manual & hjälp` instead of `Support` as the help section.
+- Use descriptive animation labels instead of raw technical names in the UI.
+- Technical YAML names may remain unchanged internally for backwards compatibility.
 
 Expected conditional logic:
 
@@ -93,6 +104,77 @@ Expected conditional logic:
 - `charset: custom` should show custom charset input; other charset modes should hide it.
 - Animation-specific timing fields should be hidden or disabled when animation is off.
 - Advanced visual fields should be grouped separately from common setup fields.
+
+## Responsive editor requirements
+
+The UI editor should work well inside Home Assistant on desktop, tablet and mobile layouts.
+
+Responsive behavior:
+
+- Use a single-column layout on narrow screens.
+- Use compact two-column grouping only when enough width is available.
+- Avoid fixed widths that can overflow the Home Assistant editor panel.
+- Allow labels, help text and inputs to wrap cleanly.
+- Keep touch targets large enough for tablets and mobile devices.
+- Keep important controls reachable without horizontal scrolling.
+- Preserve readable spacing without wasting vertical space.
+- Keep preview usable on small screens by allowing it to scale or collapse.
+- Advanced sections may be collapsed by default on small screens.
+
+## Typography editor decisions
+
+Standard mode should expose typography as a simple style choice rather than many technical fields.
+
+Recommended standard typography choices:
+
+- Theme default
+- Mechanical
+- Transit
+- Clean
+- Mono
+
+Advanced typography may expose:
+
+- Font preset
+- Custom font family
+- Font size
+- Font weight
+- Italic
+- Letter spacing
+- Text transform
+- Text glow strength
+- Reset typography to theme default
+
+Avoid adding text decoration options that do not fit the split-flap concept, such as underline or strikethrough, unless there is a clear use case later.
+
+Font loading decision:
+
+- Use font stacks and presets by default.
+- Do not automatically fetch Google Fonts in the runtime card or editor.
+- Do not add font upload to the first advanced editor implementation.
+- Allow advanced users to enter a custom font-family manually.
+- Document that custom fonts should be loaded through Home Assistant themes, local resources or user-controlled CSS.
+
+## Animation terminology decisions
+
+Use user-friendly labels in the UI while keeping the existing YAML option names internally.
+
+Recommended labels:
+
+- `flip_duration` → `Flip speed` / `Bläddringshastighet`
+- `flip_stagger` → `Delay between flaps` / `Fördröjning mellan teckenrutor`
+- `cycle_count` → `Shuffle steps before final letter` / `Mellansteg före slutbokstav`
+
+Standard mode should preferably expose an `Animation feel` / `Animationskänsla` preset instead of several technical values.
+
+Suggested presets:
+
+- Calm / Lugn
+- Mechanical / Mekanisk
+- Fast / Snabb
+- Instant / Direkt
+
+Advanced mode may expose the fine-tuning fields with descriptive help text.
 
 ## Performance and code quality
 
