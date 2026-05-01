@@ -12,11 +12,7 @@ Target version:
 - [ ] Major
 - [ ] Pre-release / alpha
 
-Version:
-
-```text
-0.1.0-alpha.2
-```
+Version: `0.1.0-alpha.2`
 
 ## Change type
 
@@ -52,6 +48,14 @@ Version:
 - [ ] Existing themes preserved
 - [ ] Visual direction follows `docs/STANDING_CONTEXT.md`
 - [ ] Local Home Assistant test recommended before merge
+
+## Support
+
+This is a hobby project built while learning more about Home Assistant, smart homes, code and dashboards.
+
+Support continued development:
+
+[Support me on Ko-fi](https://ko-fi.com/lifarvidsson)
 
 ## Visual/design notes
 
