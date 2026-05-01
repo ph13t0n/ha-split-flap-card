@@ -1,0 +1,30 @@
+<type>: <short summary>
+
+Why:
+- 
+
+What changed:
+- 
+
+Added:
+- 
+
+Changed:
+- 
+
+Removed:
+- 
+
+Fixed:
+- 
+
+Replaced:
+- 
+
+Testing:
+- 
+
+Standing context:
+- Keep src and dist aligned.
+- Preserve existing YAML compatibility.
+- Follow docs/STANDING_CONTEXT.md.
