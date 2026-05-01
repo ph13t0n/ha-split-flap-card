@@ -21,7 +21,7 @@ The preferred visual direction is:
 - condensed display-like typography
 - high contrast against dark backgrounds
 - restrained glow, not neon
-- a premium kiosk/signage feeling
+- premium kiosk/signage feeling
 
 ## Mechanical target theme
 
@@ -54,17 +54,6 @@ This is a UX reference, not a dependency.
 
 Split-Flap Card should avoid directly copying another project’s code or proprietary design, but may use similar clarity, grouping and dashboard-friendly configuration patterns.
 
-## Support/project section
-
-A support section may be included in documentation or editor UI when appropriate.
-
-Tone should be personal but professional:
-
-- hobby project
-- Home Assistant focused
-- built while learning
-- support helps continued maintenance
-
 ## Update rules
 
 When updating the card:
@@ -76,8 +65,9 @@ When updating the card:
 5. Do not remove existing themes unless explicitly planned.
 6. Prefer additive changes over destructive changes.
 7. Document new options in README.
-8. Test syntax before release.
-9. Keep the visual goal aligned with the mechanical split-flap reference.
+8. Update CHANGELOG.md when user-facing changes are made.
+9. Update package.json version when releasing.
+10. Keep the visual goal aligned with the mechanical split-flap reference.
 
 ## Local and GitHub workflow
 
