@@ -94,6 +94,36 @@ Expected conditional logic:
 - Animation-specific timing fields should be hidden or disabled when animation is off.
 - Advanced visual fields should be grouped separately from common setup fields.
 
+## Performance and code quality
+
+The card and editor should be clean, lightweight and avoid unnecessary system load.
+
+Performance requirements:
+
+- Avoid heavy runtime dependencies.
+- Avoid external font loading by default.
+- Use font stacks and presets rather than fetching Google Fonts automatically.
+- Avoid expensive DOM rebuilds when only one configuration value changes.
+- Avoid unnecessary timers, intervals and repeated calculations.
+- Stop timers and animation work when the card is disconnected.
+- Keep animation CSS-based where possible.
+- Avoid large inline assets in the runtime card.
+- Keep visual effects subtle and efficient, especially shadows, gradients and filters.
+- Keep editor conditional logic simple and deterministic.
+- Do not make the editor or card poll Home Assistant unnecessarily.
+- Preserve compatibility with low-power dashboard devices, tablets and wall panels.
+
+Code quality requirements:
+
+- Prefer readable, maintainable code over clever shortcuts.
+- Keep source and dist aligned.
+- Avoid duplicated logic where practical.
+- Keep helper functions small and named clearly.
+- Validate and sanitize user-provided values.
+- Preserve unknown configuration keys when the editor updates known fields.
+- Keep backwards compatibility with existing YAML.
+- Use comments only where they clarify intent, not to explain obvious code.
+
 ## Update rules
 
 When updating the card:
