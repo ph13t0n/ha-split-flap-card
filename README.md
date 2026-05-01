@@ -8,6 +8,16 @@ This project is currently in alpha.
 
 The configuration API may change before `v1.0.0`.
 
+## Project context
+
+Standing design and update context is documented in:
+
+[Standing Context](./docs/STANDING_CONTEXT.md)
+
+Release changes are documented in:
+
+[Changelog](./CHANGELOG.md)
+
 ## Preview examples
 
 <p align="center">
@@ -47,6 +57,7 @@ Split-Flap Card is a Home Assistant Lovelace custom card that renders static tex
 - Configurable font family and size
 - Built-in themes:
   - `kiosk_gold`
+  - `mechanical_gold`
   - `classic_airport`
   - `terminal_amber`
   - `monochrome`
@@ -109,6 +120,21 @@ segments: 16
 theme: kiosk_gold
 ```
 
+## Mechanical gold example
+
+```yaml
+type: custom:split-flap-card
+text: SPLIT-FLAP CARD
+segments: 16
+theme: mechanical_gold
+animation: true
+initial_animation: true
+cycle_chars: true
+cycle_count: 2
+flip_duration: 640
+flip_stagger: 35
+```
+
 ## Swedish example
 
 ```yaml
@@ -117,7 +143,7 @@ text: NÄSSJÖ CENTRAL
 language: sv
 charset: sv
 segments: 14
-theme: kiosk_gold
+theme: mechanical_gold
 ```
 
 ## Entity example
@@ -154,7 +180,7 @@ clock_tick_interval: 1000
 charset: custom
 custom_charset: " 0123456789:"
 segments: 8
-theme: kiosk_gold
+theme: mechanical_gold
 cycle_chars: false
 ```
 
