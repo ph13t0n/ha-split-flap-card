@@ -43,7 +43,7 @@ Andy Segment Displaycard is used as a reference for configuration UX and visual 
 
 - clear section headers
 - dark UI surface
-- gold/brown highlighted group bars
+- warm amber/gold-orange highlighted group bars
 - grouped configuration areas
 - support/project information section
 - global settings area
@@ -53,6 +53,46 @@ Andy Segment Displaycard is used as a reference for configuration UX and visual 
 This is a UX reference, not a dependency.
 
 Split-Flap Card should avoid directly copying another project’s code or proprietary design, but may use similar clarity, grouping and dashboard-friendly configuration patterns.
+
+## UI editor requirements
+
+The Home Assistant visual editor should be logical, compact and easy to use while still allowing advanced configuration.
+
+Core requirements:
+
+- Use clear headings and grouped fields.
+- Use dark editor surfaces with warm gold-orange accents.
+- Use plain, understandable labels.
+- Keep language consistent, professional and non-technical where possible.
+- Follow WCAG principles as far as possible within Home Assistant custom card editor constraints.
+- Preserve keyboard usability and visible focus states.
+- Use sufficient contrast for text, labels, borders and help links.
+- Keep related options together.
+- Hide or disable options that are not valid for the selected source, theme or mode.
+- Do not remove unknown YAML keys from the user configuration.
+- Advanced options should exist, but should not overwhelm the default editor view.
+- Help links marked with `?` should link to the relevant GitHub documentation/manual section.
+
+Recommended grouping:
+
+1. Content
+2. Source
+3. Display
+4. Theme
+5. Typography
+6. Segments
+7. Animation
+8. Advanced
+9. Support
+
+Expected conditional logic:
+
+- `source: text` should show text input and hide entity/attribute-specific inputs.
+- `source: entity` should show entity input and optional attribute input.
+- `source: clock` should show clock format and tick interval, and hide text/entity fields that are not relevant.
+- `charset: custom` should show custom charset input; other charset modes should hide it.
+- Animation-specific timing fields should be hidden or disabled when animation is off.
+- Advanced visual fields should be grouped separately from common setup fields.
 
 ## Update rules
 
