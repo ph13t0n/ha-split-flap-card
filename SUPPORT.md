@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ph13t0n/ha-split-flap-card/main/docs/assets/logo/split-flap-card-icon.svg" alt="Split-Flap Card icon" width="96">
+</p>
+
 # Support
 
 This document explains how to get help with **Split-Flap Card** and how to report bugs or request features.
