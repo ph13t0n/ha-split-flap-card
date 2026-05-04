@@ -19,11 +19,11 @@
 
 ## Status
 
-> **Status:** Beta — `v0.1.0-beta.1`
+> **Status:** Beta — `v0.1.0-beta.2`
 
-Split-Flap Card has moved from **alpha** to **beta**.
+Split-Flap Card is currently in beta.
 
-This beta includes a visual editor for the most common options, configurable split-flap rendering, multiple charset presets, animation controls, built-in high-contrast themes and HACS-compatible installation.
+This beta includes a visual editor for common options, configurable split-flap rendering, multiple charset presets, animation controls, built-in high-contrast themes and HACS-compatible installation.
 
 The configuration API may still evolve before `v1.0.0`, but the project is now suitable for broader testing through HACS.
 
@@ -142,7 +142,7 @@ type: module
 For manual testing after updates, change the cache query:
 
 ```yaml
-url: /local/ha-split-flap-card.js?v=0.1.0-beta.1
+url: /local/ha-split-flap-card.js?v=0.1.0-beta.2
 type: module
 ```
 
