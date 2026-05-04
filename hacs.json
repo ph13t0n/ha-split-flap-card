@@ -1,9 +1,6 @@
 {
   "name": "Split-Flap Card",
   "filename": "ha-split-flap-card.js",
-  "content_in_root": false,
   "homeassistant": "2024.8.0",
-  "hacs": "2.0.0",
-  "render_readme": false,
-  "hide_default_branch": true"
+  "hacs": "2.0.0"
 }
