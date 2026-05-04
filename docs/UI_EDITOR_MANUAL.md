@@ -1,185 +1,206 @@
 # UI Editor Manual
 
-This manual describes the Split-Flap Card visual editor.
+This manual describes the Split-Flap Card visual editor as it exists in the current beta.
 
 ## UI editor manual
 
-The editor is organized as a guided flow:
+The editor exposes the most common card options directly in the Home Assistant visual editor.
 
-1. **Content** — choose what the card should display.
-2. **Appearance** — choose theme, typography, alignment and flap slots.
-3. **Motion** — choose animation behavior.
-4. **Advanced** — fine-tune typography, flap geometry, animation, colors and character data.
-
-The editor is designed for high contrast, clear interaction states and a dark terminal/wayfinding visual language.
+Advanced styling options can still be edited directly in YAML.
 
 ## Content
 
-Use **Content** to choose the data source.
+Use **Source** to choose what the card should display.
 
 Available source modes:
 
-- **Text** — show fixed text from the card configuration.
-- **Entity / Sensor** — show a Home Assistant entity state or one of its attributes.
-- **Clock** — show a browser-side clock using the selected format.
+- **text** — show fixed text from the card configuration.
+- **entity** — show a Home Assistant entity state or one of its attributes.
+- **clock** — show a browser-side clock using the selected format.
 
 Only the fields relevant to the selected source are shown.
 
+## Language and charset
+
+The editor supports language and charset selection.
+
+Available language presets:
+
+- `en`
+- `sv`
+- `nordic`
+- `western`
+
+Available charset presets:
+
+- `auto`
+- `en`
+- `sv`
+- `nordic`
+- `western`
+- `weather`
+- `weather_sv`
+- `extended`
+- `custom`
+
+Use `custom_charset` when you need strict control over which characters the display may cycle through.
+
 ## Appearance
 
-Use **Appearance** to choose the visual style.
-
-### Theme
-
-Themes change the split-flap segments and text color. They do not replace the whole card background by default.
+Use **Theme** to choose the visual style.
 
 Available themes:
 
-- Default / Mechanical Gold
-- Classic Airport
-- Terminal Amber
-- Nordic Light
-- Monochrome
-- Home Assistant Blue
-- Sweden Delight
+- `classic`
+- `kiosk_gold`
+- `classic_airport`
+- `terminal_amber`
+- `monochrome`
 
-The dark card background and frame/housing remain stable unless changed manually in Advanced mode.
+Themes apply colors to the card, split-flap segments, separator line, segment border and text.
 
-### Typography
+## Layout
 
-The typography selector shows a compact preview for each font style.
+The editor exposes:
 
-Available typography presets:
+- `segments`
+- `align`
+- `text_transform`
 
-- **Theme default** — uses the selected theme typography.
-- **Mechanical** — condensed and mechanical.
-- **Transit** — wayfinding and airport signage inspired.
-- **Clean** — modern and neutral.
-- **Mono** — technical, monospaced terminal style.
-- **Custom** — uses a custom CSS `font-family` and optional stylesheet URL.
+Advanced layout values can be edited in YAML:
 
-### Custom fonts
+- `card_background`
+- `card_border_radius`
+- `card_padding`
+- `segment_width`
+- `segment_height`
+- `segment_gap`
+- `segment_radius`
 
-When **Custom** is selected, Advanced mode opens and shows fields for:
+## Typography
+
+The current beta supports typography configuration through YAML.
+
+Available YAML options:
 
 - `font_family`
-- `font_stylesheet`
-
-The stylesheet URL may point to a supported stylesheet such as a Google Fonts CSS URL or a local Home Assistant `/local/...` stylesheet.
-
-Examples:
-
-```yaml
-font_preset: custom
-font_family: "Roboto Condensed, Arial Narrow, sans-serif"
-font_stylesheet: "https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700;900&display=swap"
-```
-
-For locally hosted fonts, add your own stylesheet under Home Assistant `www`, then reference it through `/local/...`.
+- `font_size`
+- `font_weight`
+- `text_color`
 
 Example:
 
 ```yaml
-font_preset: custom
-font_family: "My Custom Font, sans-serif"
-font_stylesheet: "/local/fonts/my-custom-font.css"
+font_family: "Roboto Mono, monospace"
+font_size: 44
+font_weight: 800
+text_color: "#dcb215"
 ```
 
-The user is responsible for making sure they have the correct rights and licenses for any font they load or upload.
+This beta does not include built-in typography presets or a built-in `font_stylesheet` loader.
 
 ## Motion
 
-Use **Motion** to choose animation behavior.
+The editor exposes:
 
-Available animation feels:
+- `animation`
+- `cycle_chars`
+- `flip_duration`
+- `flip_stagger`
 
-- Calm
-- Mechanical
-- Fast
-- Instant
-- Custom
+Additional animation options can be edited in YAML:
 
-When **Custom** is selected, Advanced mode opens and exposes animation fine-tuning.
+- `initial_animation`
+- `cycle_count`
+- `clock_tick_interval`
 
-Animation values use milliseconds where marked with `(ms)`.
+Example:
 
-## Advanced
+```yaml
+animation: true
+initial_animation: true
+cycle_chars: true
+cycle_count: 2
+flip_duration: 520
+flip_stagger: 45
+```
 
-Advanced mode exposes detailed controls.
+## Entity and attribute display
 
-### Advanced typography
+For entity mode, use:
 
-Controls:
+```yaml
+source: entity
+entity: input_text.split_flap_message
+```
 
-- Font size
-- Font weight
-- Italic
-- Letter spacing
-- Letter position up/down
-- Text transform
-- Text glow
+For attribute mode, add:
 
-Default text glow should remain `off` for crisp split-flap readability.
+```yaml
+attribute: temperature
+```
 
-### Flap slot design
+If an entity is not found, the card displays:
 
-Controls:
+```text
+ENTITY NOT FOUND
+```
 
-- Slot width
-- Slot height
-- Gap between slots
-- Corner radius
+## Clock display
 
-### Animation fine-tuning
+For clock mode, use:
 
-Controls:
+```yaml
+source: clock
+clock_format: HH:mm:ss
+clock_tick_interval: 1000
+charset: custom
+custom_charset: " 0123456789:"
+segments: 8
+```
 
-- Flip duration (ms)
-- Delay between flaps (ms)
-- Shuffle steps before final letter
+Supported clock format tokens:
 
-### Colors
+- `HH`
+- `H`
+- `mm`
+- `ss`
 
-Controls:
+## Custom fonts
 
-- Card background
-- Frame / housing
-- Top flap color
-- Bottom flap color
-- Flap border
-- Split line
-- Text color
+Custom fonts can be used if they are already available in Home Assistant, your theme or the browser environment.
 
-Theme selection updates flap and text colors. Card background and frame/housing remain dark unless changed manually.
+Example:
 
-### Advanced text data
+```yaml
+font_family: "Roboto Condensed, Arial Narrow, sans-serif"
+font_size: 52
+font_weight: 900
+```
 
-Controls:
-
-- Charset
-- Custom charset
-- Fallback character
-- Pad character
-
-Use this when you need Swedish/Nordic characters, special characters or controlled padding behavior.
+If you load or upload fonts yourself, make sure you have the correct rights and licenses.
 
 ## Accessibility notes
 
-The editor uses:
+The card is designed for high-contrast display use cases such as dashboards, kiosks and information boards.
 
-- High-contrast interaction colors.
-- Visible focus outlines.
-- Clear section grouping.
-- Help buttons for each section.
-- Labels for form controls.
+For best readability:
 
-Themes should maintain strong contrast between segment background and text color.
+- Use enough contrast between `segment_background` and `text_color`.
+- Keep `segments` wide enough for the text you want to display.
+- Avoid very small `font_size` values on wall displays or tablets.
+- Prefer uppercase text for transit-board style layouts.
 
 ## Future work
 
 Planned future work includes:
 
+- Auto-paging.
+- MDI/icon token rendering.
 - Symbol packs.
 - Airport/railway wayfinding presets.
+- Typography presets.
+- Custom stylesheet/font URL loader.
+- In-editor issue report helper.
 - Community library for shared themes and examples.
 - Import/export of reusable presets.
