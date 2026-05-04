@@ -1,9 +1,13 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ph13t0n/ha-split-flap-card/main/docs/assets/logo/split-flap-card-icon.svg" alt="Split-Flap Card icon" width="96">
+</p>
+
 # Support
 
 This document explains how to get help with **Split-Flap Card** and how to report bugs or request features.
 
-Split-Flap Card is currently in alpha.  
-The configuration API may change before `v1.0.0`.
+Split-Flap Card is currently in beta.  
+The configuration API may still evolve before `v1.0.0`.
 
 ---
 
@@ -17,6 +21,7 @@ Before creating a GitHub Issue, please check:
 - [Examples](docs/examples.md)
 - [Troubleshooting](docs/troubleshooting.md)
 - [FAQ](docs/faq.md)
+- [UI Editor Manual](docs/UI_EDITOR_MANUAL.md)
 
 Many common problems are related to browser cache, missing dashboard resources, unsupported characters, duplicate resources, or incorrect YAML.
 
@@ -38,6 +43,8 @@ A good bug report should include:
 - Browser console errors if available
 - Clear description of expected behavior
 - Clear description of actual behavior
+
+The visual editor includes a **Report issue** helper that can generate a structured GitHub issue draft with diagnostic information. Nothing is submitted automatically. Review the generated issue text before posting it.
 
 ---
 
@@ -80,7 +87,7 @@ Example:
 /hacsfiles/ha-split-flap-card/ha-split-flap-card.js
 
 or:
-/local/ha-split-flap-card.js?v=029
+/local/ha-split-flap-card.js?v=0.1.0-beta.1
 
 ## YAML configuration
 
@@ -89,7 +96,7 @@ type: custom:split-flap-card
 source: text
 text: CENTRAL STATION
 segments: 16
-theme: kiosk_gold
+theme: mechanical_gold
 ```
 
 ## Screenshots or video
@@ -119,26 +126,6 @@ Recommended generic entity:
 
 ```yaml
 entity: input_text.split_flap_message
-```
-
----
-
-## Feature requests
-
-Feature requests are welcome.
-
-A good feature request should include:
-
-- What you want to achieve
-- Why the current behavior is not enough
-- Example YAML if possible
-- Screenshot, mockup, or visual reference if useful
-- Whether the feature should be optional or default behavior
-
-Example:
-
-```text
-I want an animation preset for compact dashboard rows so I do not need to tune step_duration, final_step_duration, and stagger manually.
 ```
 
 ---
@@ -188,9 +175,7 @@ entity: input_text.split_flap_message
 language: en
 charset: weather
 segments: 32
-page_mode: auto
-icon_tokens: true
-theme: kiosk_gold
+theme: mechanical_gold
 ```
 
 Avoid sharing real private entity names if they reveal personal information.
@@ -242,7 +227,7 @@ Usually caused by browser cache.
 For manual installation, update the version query:
 
 ```yaml
-url: /local/ha-split-flap-card.js?v=030
+url: /local/ha-split-flap-card.js?v=0.1.0-beta.1
 type: module
 ```
 
@@ -276,26 +261,6 @@ language: sv
 charset: weather_sv
 ```
 
-### Icon token not rendering
-
-Enable:
-
-```yaml
-icon_tokens: true
-```
-
-Use token syntax:
-
-```text
-:sunny:
-```
-
-not:
-
-```text
-mdi:weather-sunny
-```
-
 ---
 
 ## What is supported
@@ -309,7 +274,7 @@ Supported:
 - HACS custom repository installation
 - Manual resource installation
 - YAML configuration
-- Visual editor basics
+- Visual editor basics and beta editor flow
 
 Best effort:
 
@@ -362,6 +327,7 @@ If you accidentally post sensitive data, remove it immediately and rotate the af
 - [Icon Tokens](docs/icon-tokens.md)
 - [Themes](docs/themes.md)
 - [Visual Editor](docs/visual-editor.md)
+- [UI Editor Manual](docs/UI_EDITOR_MANUAL.md)
 - [Troubleshooting](docs/troubleshooting.md)
 - [FAQ](docs/faq.md)
 - [Privacy and Public Examples](docs/privacy-and-public-examples.md)

@@ -43,7 +43,7 @@ Andy Segment Displaycard is used as a reference for configuration UX and visual 
 
 - clear section headers
 - dark UI surface
-- gold/brown highlighted group bars
+- warm amber/gold-orange highlighted group bars
 - grouped configuration areas
 - support/project information section
 - global settings area
@@ -53,6 +53,158 @@ Andy Segment Displaycard is used as a reference for configuration UX and visual 
 This is a UX reference, not a dependency.
 
 Split-Flap Card should avoid directly copying another project’s code or proprietary design, but may use similar clarity, grouping and dashboard-friendly configuration patterns.
+
+## UI editor requirements
+
+The Home Assistant visual editor should be logical, compact, responsive and easy to use while still allowing advanced configuration.
+
+Core requirements:
+
+- Use clear headings and grouped fields.
+- Use dark editor surfaces with warm gold-orange accents.
+- Use plain, understandable labels.
+- Keep language consistent, professional and non-technical where possible.
+- Follow WCAG principles as far as possible within Home Assistant custom card editor constraints.
+- Preserve keyboard usability and visible focus states.
+- Use sufficient contrast for text, labels, borders and help links.
+- Keep related options together.
+- Hide or disable options that are not valid for the selected source, theme or mode.
+- Do not remove unknown YAML keys from the user configuration.
+- Advanced options should exist, but should not overwhelm the default editor view.
+- Help links marked with `?` should link to the relevant GitHub documentation/manual section.
+- The editor should feel as polished as the card itself; color, form and experience should be consistent.
+
+Recommended grouping:
+
+1. Preview
+2. Content
+3. Display
+4. Theme
+5. Typography
+6. Flap slots
+7. Animation
+8. Advanced
+9. Manual & Help
+
+Recommended terminology:
+
+- Use `Content` / `Innehåll` instead of `Source` as a visible section heading.
+- Use `What should the card show?` / `Vad ska kortet visa?` for the source selector.
+- Use `Entity / Sensor` / `Entitet / sensor` instead of `Entity` alone.
+- Use `Flap slots` / `Teckenrutor` instead of `Segments` in the standard editor.
+- Use `Manual & Help` / `Manual & hjälp` instead of `Support` as the help section.
+- Use descriptive animation labels instead of raw technical names in the UI.
+- Technical YAML names may remain unchanged internally for backwards compatibility.
+
+Expected conditional logic:
+
+- `source: text` should show text input and hide entity/attribute-specific inputs.
+- `source: entity` should show entity input and optional attribute input.
+- `source: clock` should show clock format and tick interval, and hide text/entity fields that are not relevant.
+- `charset: custom` should show custom charset input; other charset modes should hide it.
+- Animation-specific timing fields should be hidden or disabled when animation is off.
+- Advanced visual fields should be grouped separately from common setup fields.
+
+## Responsive editor requirements
+
+The UI editor should work well inside Home Assistant on desktop, tablet and mobile layouts.
+
+Responsive behavior:
+
+- Use a single-column layout on narrow screens.
+- Use compact two-column grouping only when enough width is available.
+- Avoid fixed widths that can overflow the Home Assistant editor panel.
+- Allow labels, help text and inputs to wrap cleanly.
+- Keep touch targets large enough for tablets and mobile devices.
+- Keep important controls reachable without horizontal scrolling.
+- Preserve readable spacing without wasting vertical space.
+- Keep preview usable on small screens by allowing it to scale or collapse.
+- Advanced sections may be collapsed by default on small screens.
+
+## Typography editor decisions
+
+Standard mode should expose typography as a simple style choice rather than many technical fields.
+
+Recommended standard typography choices:
+
+- Theme default
+- Mechanical
+- Transit
+- Clean
+- Mono
+
+Advanced typography may expose:
+
+- Font preset
+- Custom font family
+- Font size
+- Font weight
+- Italic
+- Letter spacing
+- Text transform
+- Text glow strength
+- Reset typography to theme default
+
+Avoid adding text decoration options that do not fit the split-flap concept, such as underline or strikethrough, unless there is a clear use case later.
+
+Font loading decision:
+
+- Use font stacks and presets by default.
+- Do not automatically fetch Google Fonts in the runtime card or editor.
+- Do not add font upload to the first advanced editor implementation.
+- Allow advanced users to enter a custom font-family manually.
+- Document that custom fonts should be loaded through Home Assistant themes, local resources or user-controlled CSS.
+
+## Animation terminology decisions
+
+Use user-friendly labels in the UI while keeping the existing YAML option names internally.
+
+Recommended labels:
+
+- `flip_duration` → `Flip speed` / `Bläddringshastighet`
+- `flip_stagger` → `Delay between flaps` / `Fördröjning mellan teckenrutor`
+- `cycle_count` → `Shuffle steps before final letter` / `Mellansteg före slutbokstav`
+
+Standard mode should preferably expose an `Animation feel` / `Animationskänsla` preset instead of several technical values.
+
+Suggested presets:
+
+- Calm / Lugn
+- Mechanical / Mekanisk
+- Fast / Snabb
+- Instant / Direkt
+
+Advanced mode may expose the fine-tuning fields with descriptive help text.
+
+## Performance and code quality
+
+The card and editor should be clean, lightweight and avoid unnecessary system load.
+
+Performance requirements:
+
+- Avoid heavy runtime dependencies.
+- Avoid external font loading by default.
+- Use font stacks and presets rather than fetching Google Fonts automatically.
+- Avoid expensive DOM rebuilds when only one configuration value changes.
+- Avoid unnecessary timers, intervals and repeated calculations.
+- Stop timers and animation work when the card is disconnected.
+- Keep animation CSS-based where possible.
+- Avoid large inline assets in the runtime card.
+- Keep visual effects subtle and efficient, especially shadows, gradients and filters.
+- Keep editor conditional logic simple and deterministic.
+- Do not make the editor or card poll Home Assistant unnecessarily.
+- Preserve compatibility with low-power dashboard devices, tablets and wall panels.
+
+Code quality requirements:
+
+- Prefer readable, maintainable code over clever shortcuts.
+- Keep source and dist aligned.
+- Avoid duplicated logic where practical.
+- Keep helper functions small and named clearly.
+- Validate and sanitize user-provided values.
+- Preserve unknown configuration keys when the editor updates known fields.
+- Keep backwards compatibility with existing YAML.
+- Use comments only where they clarify intent, not to explain obvious code.
 
 ## Update rules
 
