@@ -12,7 +12,6 @@ permissions: {}
 jobs:
   validate:
     runs-on: ubuntu-latest
-
     steps:
       - name: HACS validation
         uses: hacs/action@main
