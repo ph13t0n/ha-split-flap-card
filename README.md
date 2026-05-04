@@ -23,7 +23,7 @@
 
 Split-Flap Card has moved from **alpha** to **beta**.
 
-This marks a major project milestone. The card now includes a redesigned visual editor, built-in high-contrast themes, typography presets with previews, animation controls, improved split-flap rendering, accessibility-oriented editor decisions, and a structured support/reporting flow.
+This beta includes a visual editor for the most common options, configurable split-flap rendering, multiple charset presets, animation controls, built-in high-contrast themes and HACS-compatible installation.
 
 The configuration API may still evolve before `v1.0.0`, but the project is now suitable for broader testing through HACS.
 
@@ -39,12 +39,11 @@ The visual direction is inspired by mechanical transit displays, airport signage
 - Entity state mode
 - Entity attribute mode
 - Browser clock mode
-- Redesigned visual editor
-- Guided editor flow: Content, Appearance, Motion and Advanced
+- Visual editor for common options
 - Mechanical split-flap animation
 - Initial animation from blank state
 - Configurable animation feel
-- Advanced animation timing controls
+- Advanced animation timing controls through YAML
 - `segments` and `max_chars`
 - Swedish charset support with `Å`, `Ä`, `Ö`
 - Nordic charset support
@@ -52,29 +51,52 @@ The visual direction is inspired by mechanical transit displays, airport signage
 - Weather charset support with `°`
 - Extended charset preset
 - Custom charset
-- Configurable colors
-- Configurable segment size
-- Configurable font family, size, weight and vertical offset
-- Typography presets with visual preview
-- Optional custom font family and stylesheet URL
+- Configurable colors through YAML
+- Configurable segment size through YAML
+- Configurable font family, size and weight through YAML
 - Built-in themes:
-  - `mechanical_gold` — shown as **Default / Mechanical Gold**
+  - `classic`
+  - `kiosk_gold`
   - `classic_airport`
   - `terminal_amber`
-  - `nordic_light`
   - `monochrome`
-  - `home_assistant_blue`
-  - `sweden_delight`
-- Manual & Help section in the editor
-- Issue reporting helper with diagnostic data and privacy-aware redaction
 - HACS-compatible dashboard plugin structure
+
+## Visual editor options
+
+The visual editor currently exposes the most important configuration fields:
+
+- `source`
+- `text`
+- `entity`
+- `attribute`
+- `clock_format`
+- `clock_tick_interval`
+- `language`
+- `charset`
+- `custom_charset`
+- `segments`
+- `theme`
+- `align`
+- `text_transform`
+- `animation`
+- `cycle_chars`
+- `flip_duration`
+- `flip_stagger`
+
+Advanced styling options can still be edited directly in YAML.
 
 ## Not included yet
 
 These are planned or future-facing ideas and should not block the beta release:
 
+- Auto-paging
+- MDI/icon token rendering
 - Symbol packs for arrows, gates, check-in, information, security, baggage and wayfinding icons
 - Two-slot square symbol segments
+- Built-in typography presets
+- Custom stylesheet/font URL loader
+- In-editor issue report helper
 - Community library for shared themes and presets
 - Direct in-editor import from a future community library
 - Full stable `v1.0.0` API guarantee
@@ -131,17 +153,17 @@ type: custom:split-flap-card
 source: text
 text: CENTRAL STATION
 segments: 16
-theme: mechanical_gold
+theme: kiosk_gold
 ```
 
-## Mechanical gold example
+## Kiosk gold example
 
 ```yaml
 type: custom:split-flap-card
 source: text
 text: SPLIT-FLAP CARD
 segments: 16
-theme: mechanical_gold
+theme: kiosk_gold
 animation: true
 initial_animation: true
 cycle_chars: true
@@ -159,7 +181,7 @@ text: NÄSSJÖ CENTRAL
 language: sv
 charset: sv
 segments: 14
-theme: mechanical_gold
+theme: kiosk_gold
 ```
 
 ## Entity example
@@ -196,7 +218,7 @@ clock_tick_interval: 1000
 charset: custom
 custom_charset: " 0123456789:"
 segments: 8
-theme: mechanical_gold
+theme: kiosk_gold
 cycle_chars: false
 ```
 
@@ -213,47 +235,49 @@ cycle_chars: false
 | `language` | string | `en` | Language hint |
 | `charset` | string | language value | `en`, `sv`, `nordic`, `western`, `weather`, `weather_sv`, `extended`, `custom` |
 | `custom_charset` | string | — | Custom charset when using `charset: custom` |
-| `text_transform` | string | `uppercase` | `uppercase`, `lowercase`, or unchanged |
+| `text_transform` | string | `uppercase` | `uppercase`, `lowercase`, or `none` |
 | `fallback_character` | string | space | Character used when input is unsupported |
 | `pad_character` | string | space | Character used to pad empty segments |
+| `pad_mode` | string | `end` | `start` or `end` padding |
 | `segments` | number | text length | Number of displayed segments |
 | `max_chars` | number | — | Legacy alias for `segments` |
-| `theme` | string | `mechanical_gold` | Built-in theme |
-| `font_preset` | string | `theme_default` | `theme_default`, `mechanical`, `transit`, `clean`, `mono`, `custom` |
-| `font_family` | string | theme/preset | CSS font-family |
-| `font_stylesheet` | string | — | Optional stylesheet URL for custom fonts |
-| `font_size` | number | `60` | Text size |
-| `font_weight` | number/string | `900` | Text weight |
-| `letter_spacing` | number | `-1` | Letter spacing |
-| `letter_vertical_offset` | number | `-9` | Moves letters up/down inside each flap |
-| `text_glow` | string | `off` | `off`, `low`, `medium` |
+| `max_segments` | number | `96` | Safety limit for automatic segment count |
+| `theme` | string | `classic` | `classic`, `kiosk_gold`, `classic_airport`, `terminal_amber`, `monochrome` |
+| `card_background` | string | `#050505` | Card background color |
+| `card_border_radius` | number | `16` | Card border radius in pixels |
+| `card_padding` | number | `16` | Card padding in pixels |
+| `segment_background` | string | `#111111` | Segment background color |
+| `segment_background_top` | string | `#1b1b1b` | Top flap background color |
+| `segment_background_bottom` | string | `#090909` | Bottom flap background color |
+| `segment_separator_color` | string | `#000000` | Split line color |
+| `segment_border_color` | string | `#2a2a2a` | Segment border color |
+| `text_color` | string | `#dcb215` | Text color |
+| `font_family` | string | `Roboto Mono, monospace` | CSS font-family |
+| `font_size` | number | `44` | Text size in pixels |
+| `font_weight` | number/string | `800` | Text weight |
+| `segment_width` | number | `48` | Segment width in pixels |
+| `segment_height` | number | `72` | Segment height in pixels |
+| `segment_gap` | number | `6` | Gap between segments in pixels |
+| `segment_radius` | number | `6` | Segment corner radius in pixels |
 | `align` | string | `center` | `left`, `center`, or `right` |
 | `animation` | boolean | `true` | Enable split-flap animation |
 | `initial_animation` | boolean | `true` | Animate from blank on first render |
 | `cycle_chars` | boolean | `true` | Show intermediate characters |
 | `cycle_count` | number | `2` | Number of intermediate characters |
-| `flip_duration` | number | `760` | Flip duration in ms |
-| `flip_stagger` | number | `45` | Delay between segment flips in ms |
-| `segment_width` | number | `48` | Segment width |
-| `segment_height` | number | `78` | Segment height |
-| `segment_gap` | number | `6` | Gap between segments |
-| `segment_radius` | number | `7` | Segment corner radius |
+| `flip_duration` | number | `520` | Flip duration in milliseconds |
+| `flip_stagger` | number | `45` | Delay between segment flips in milliseconds |
 
 ## Custom fonts
 
-Custom fonts can be used by setting `font_preset: custom` and providing a CSS `font_family`. If the font is not already available in Home Assistant or the browser, provide a `font_stylesheet` URL.
+Custom fonts can be used by setting `font_family` to a CSS font stack that is already available in Home Assistant or loaded by your browser/theme.
 
 ```yaml
-font_preset: custom
 font_family: "Roboto Condensed, Arial Narrow, sans-serif"
-font_stylesheet: "https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700;900&display=swap"
+font_size: 52
+font_weight: 900
 ```
 
-```yaml
-font_preset: custom
-font_family: "My Custom Font, sans-serif"
-font_stylesheet: "/local/fonts/my-custom-font.css"
-```
+This beta does not include a built-in `font_stylesheet` loader. If you use custom fonts, make sure they are loaded through your Home Assistant setup, theme or browser environment.
 
 You are responsible for making sure you have the correct rights and licenses for any font you load or upload.
 
@@ -266,9 +290,17 @@ You are responsible for making sure you have the correct rights and licenses for
 
 ## Support and issue reports
 
-The visual editor includes a **Report issue** helper that generates a structured GitHub issue draft using the support template.
+Use GitHub Issues for bug reports, feature requests and support questions.
 
-Diagnostic data is generated locally in the browser. Nothing is submitted automatically. Sensitive-looking values are redacted before the issue text is generated, and users must review and confirm before opening GitHub.
+When reporting an issue, include:
+
+- Home Assistant version
+- Browser or app
+- Card version
+- Your card YAML
+- A screenshot, if visual rendering is part of the issue
+
+Avoid sharing screenshots or YAML containing private entity names, tokens, addresses or private URLs.
 
 ## Optional support
 
