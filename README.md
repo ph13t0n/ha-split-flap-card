@@ -1,6 +1,21 @@
-# Split-Flap Card for Home Assistant
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ph13t0n/ha-split-flap-card/main/docs/assets/logo/split-flap-card-logo.svg" alt="Split-Flap Card logo" width="640">
+</p>
 
-![Split-Flap Card preview](./docs/images/social-preview.jpg)
+<p align="center">
+  <strong>Terminal-inspired split-flap display card for Home Assistant dashboards.</strong><br>
+  Built for Lovelace, HACS, transit dashboards, kiosk displays and high-contrast information views.
+</p>
+
+<p align="center">
+  <a href="https://github.com/ph13t0n/ha-split-flap-card/releases"><img alt="Release" src="https://img.shields.io/github/v/release/ph13t0n/ha-split-flap-card?include_prereleases&label=release"></a>
+  <a href="https://github.com/ph13t0n/ha-split-flap-card/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/ph13t0n/ha-split-flap-card"></a>
+  <a href="https://github.com/ph13t0n/ha-split-flap-card/issues"><img alt="Issues" src="https://img.shields.io/github/issues/ph13t0n/ha-split-flap-card"></a>
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ph13t0n/ha-split-flap-card/main/docs/assets/images/split-flap-card-beta-preview.svg" alt="Split-Flap Card beta preview" width="100%">
+</p>
 
 ## Status
 
@@ -11,34 +26,6 @@ Split-Flap Card has moved from **alpha** to **beta**.
 This marks a major project milestone. The card now includes a redesigned visual editor, built-in high-contrast themes, typography presets with previews, animation controls, improved split-flap rendering, accessibility-oriented editor decisions, and a structured support/reporting flow.
 
 The configuration API may still evolve before `v1.0.0`, but the project is now suitable for broader testing through HACS.
-
-## Project context
-
-Standing design and update context is documented in:
-
-[Standing Context](./docs/STANDING_CONTEXT.md)
-
-Release changes are documented in:
-
-[Changelog](./CHANGELOG.md)
-
-The visual editor is documented in:
-
-[UI Editor Manual](./docs/UI_EDITOR_MANUAL.md)
-
-## Preview examples
-
-<p align="center">
-  <img src="./docs/images/tablet_mockup.jpg" alt="Split-Flap Card tablet mockup" width="100%">
-</p>
-
-<p align="center">
-  <img src="./docs/images/tv_mockup.jpg" alt="Split-Flap Card TV mockup" width="100%">
-</p>
-
-<p align="center">
-  <img src="./docs/images/waitroom_mockup.jpg" alt="Split-Flap Card waiting room mockup" width="100%">
-</p>
 
 ## Overview
 
@@ -256,8 +243,6 @@ cycle_chars: false
 
 Custom fonts can be used by setting `font_preset: custom` and providing a CSS `font_family`. If the font is not already available in Home Assistant or the browser, provide a `font_stylesheet` URL.
 
-Examples:
-
 ```yaml
 font_preset: custom
 font_family: "Roboto Condensed, Arial Narrow, sans-serif"
@@ -272,15 +257,18 @@ font_stylesheet: "/local/fonts/my-custom-font.css"
 
 You are responsible for making sure you have the correct rights and licenses for any font you load or upload.
 
+## Documentation
+
+- [UI Editor Manual](./docs/UI_EDITOR_MANUAL.md)
+- [Support](./SUPPORT.md)
+- [Changelog](./CHANGELOG.md)
+- [Standing Context](./docs/STANDING_CONTEXT.md)
+
 ## Support and issue reports
 
 The visual editor includes a **Report issue** helper that generates a structured GitHub issue draft using the support template.
 
 Diagnostic data is generated locally in the browser. Nothing is submitted automatically. Sensitive-looking values are redacted before the issue text is generated, and users must review and confirm before opening GitHub.
-
-See:
-
-[Support](./SUPPORT.md)
 
 ## Optional support
 
