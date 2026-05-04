@@ -1,3 +1,5 @@
+import "./ha-split-flap-card-canary-v2.js?v=0.1.0-alpha.2-canary.2";
+
 (() => {
   const SPLIT_FLAP_CANARY_VERSION = "0.1.0-alpha.2-canary.3";
 
