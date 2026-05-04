@@ -10,6 +10,7 @@ Recommended version format:
 v0.1.0-alpha.1
 v0.1.0-alpha.2
 v0.1.0-beta.1
+v0.1.0-beta.2
 v1.0.0
 ```
 
@@ -27,122 +28,105 @@ v1.0.0
 
 ---
 
+## v0.1.0-beta.2
+
+Documentation correction release.
+
+This release aligns the public documentation with the actual beta implementation currently shipped in `dist/ha-split-flap-card.js`.
+
+### Changed
+
+- Corrected README status to `v0.1.0-beta.2`.
+- Corrected README examples to use the implemented `kiosk_gold` theme.
+- Corrected the documented built-in themes to:
+  - `classic`
+  - `kiosk_gold`
+  - `classic_airport`
+  - `terminal_amber`
+  - `monochrome`
+- Corrected the visual editor documentation so it only describes options currently exposed by the editor.
+- Clarified that typography, font loading, issue helper and symbol/icon features are planned or YAML-only where applicable.
+- Bumped `package.json` to `0.1.0-beta.2`.
+
+### Fixed
+
+- Fixed public documentation that incorrectly mentioned not-yet-implemented themes and editor features.
+
+### Notes
+
+- No JavaScript card behavior changed in this release.
+- This release is intended to make HACS/GitHub documentation accurate and consistent.
+
+---
+
 ## v0.1.0-beta.1
 
 First public beta milestone.
 
-This release moves **Split-Flap Card** from alpha to beta. It marks a major step from early experiment toward broader HACS testing, with a redesigned visual editor, improved mechanical rendering, built-in high-contrast themes, typography controls, animation tuning and a structured support/reporting flow.
-
-### Milestone
-
-- Moved project status from alpha to beta.
-- Introduced the first beta-ready visual editor experience.
-- Established a more polished transit/airport/wayfinding design direction.
+This release moves **Split-Flap Card** from alpha to beta and prepares the card for broader HACS testing.
 
 ### Added
 
-- Added redesigned visual editor with guided sections:
-  - Content
-  - Appearance
-  - Motion
-  - Advanced
-- Added dark Classic Airport / terminal-inspired editor UI.
-- Added typography selector with visual previews.
-- Added typography presets:
-  - `theme_default`
-  - `mechanical`
-  - `transit`
-  - `clean`
-  - `mono`
-  - `custom`
-- Added optional custom font support through:
-  - `font_family`
-  - `font_stylesheet`
-- Added custom font license/right-to-use notice in the editor/manual.
-- Added `letter_vertical_offset` for moving letters up/down inside each flap.
-- Added advanced animation controls with millisecond labels.
-- Added improved built-in themes:
-  - `mechanical_gold` / Default Mechanical Gold
+- Static text mode.
+- Entity state mode.
+- Entity attribute mode.
+- Browser clock mode.
+- Visual editor for common options.
+- Mechanical split-flap animation.
+- Initial animation from blank state.
+- Configurable animation behavior.
+- Advanced animation timing through YAML.
+- `segments` and `max_chars` support.
+- Swedish charset support with `Å`, `Ä`, `Ö`.
+- Nordic charset support.
+- Western European charset support.
+- Weather charset support with `°`.
+- Extended charset preset.
+- Custom charset support.
+- Configurable colors through YAML.
+- Configurable segment size through YAML.
+- Configurable font family, font size and font weight through YAML.
+- Built-in themes:
+  - `classic`
+  - `kiosk_gold`
   - `classic_airport`
   - `terminal_amber`
-  - `nordic_light`
   - `monochrome`
-  - `home_assistant_blue`
-  - `sweden_delight`
-- Added Manual & Help links in the visual editor.
-- Added Report issue helper in the visual editor.
-- Added locally generated diagnostic issue text based on `SUPPORT.md`.
-- Added privacy-aware redaction for sensitive-looking support data.
-- Added consent checkbox before opening a GitHub issue.
-- Added Copy issue text action.
-- Added GitHub issue draft action.
-- Added `docs/UI_EDITOR_MANUAL.md`.
-- Added `docs/FUTURE_PROJECTS.md` for later community library ideas.
-- Added `docs/RELEASE_CANDIDATE_DECISIONS.md` for release candidate decisions.
+- HACS-compatible dashboard plugin structure.
 
 ### Changed
 
-- Changed default visual direction to crisper split-flap lettering.
-- Changed default `text_glow` to `off` for sharper, more readable text.
-- Changed theme behavior so themes primarily affect flaps/segments and text rather than the entire card background.
-- Changed editor interaction color to a high-contrast airport/signage yellow.
-- Changed editor layout to a more step-based flow.
-- Changed theme names shown to users to be more descriptive.
 - Changed package version to `0.1.0-beta.1`.
 - Updated README status from alpha to beta.
-
-### Fixed
-
-- Fixed theme selection not visibly applying theme colors.
-- Fixed confusing Custom animation behavior by opening Advanced mode when Custom is selected.
-- Fixed Custom/Advanced logic so automatically opened Advanced mode can close again when leaving Custom.
-- Fixed typography selection being unclear by adding visual preview cards/dropdown behavior.
-- Fixed helper links so the editor links to the UI editor manual instead of only the repository root.
-- Fixed unclear field states by improving placeholder and editable field styling.
-- Fixed incomplete local help text for editor sections.
-
-### Security
-
-- Added redaction for sensitive-looking data in generated issue reports, including emails, URLs, IP addresses, tokens, secrets, passwords, API keys, webhook-like fields and location fields.
-- Issue reports are not sent automatically. The user must review the generated text and open/submit the GitHub issue manually.
+- Updated repository presentation with beta preview graphics.
 
 ### Notes
 
-- This is still a beta release. Configuration may still evolve before `v1.0.0`.
+- This is a beta release. Configuration may still evolve before `v1.0.0`.
 - Refresh the Home Assistant dashboard after updating.
 - Clear browser/app cache if the old version is still loaded.
-- Symbol packs, two-slot icon segments and the future community library are planned future work and are not part of this beta release.
+- Auto-paging, MDI/icon token rendering, symbol packs, typography presets, custom stylesheet/font URL loader and in-editor issue helper are planned future work.
 
 ---
 
 ## v0.1.0-alpha.2
 
-Workflow, documentation and preparation release for the `mechanical_gold` visual direction.
+Workflow, documentation and preparation release.
 
 ### Added
 
 - Added pull request template with version impact, changelog categories and standing context checklist.
 - Added commit message template for structured local commits.
 - Added README links to standing project context and changelog.
-- Added README examples for `mechanical_gold`.
 
 ### Changed
 
 - Bumped package version to `0.1.0-alpha.2`.
-- Updated README theme documentation to include `mechanical_gold`.
 - Clarified that future updates should keep `src` and `dist` aligned.
 
-### Removed
+### Notes
 
-- Nothing.
-
-### Fixed
-
-- Nothing.
-
-### Replaced
-
-- Nothing.
+- Some early documentation in this stage referred to planned visual directions that were later corrected in the beta documentation.
 
 ---
 
@@ -158,22 +142,13 @@ Initial public alpha release.
 - Entity attribute display mode.
 - Built-in clock mode.
 - Mechanical split-flap animation engine.
-- Auto-paging for long text.
-- Smart page splitting by words.
-- Fixed-length page splitting.
-- MDI icon token support through Home Assistant `ha-icon`.
-- Built-in icon token map.
-- Custom `icon_map` support.
-- Configurable icon color.
-- Configurable icon size.
-- Configurable icon vertical offset.
 - English charset preset.
 - Swedish charset preset with `Å`, `Ä`, and `Ö`.
 - Nordic charset preset.
 - Western European charset preset.
 - Weather charset preset with `°`.
 - Swedish weather charset preset with `Å`, `Ä`, `Ö`, and `°`.
-- Extended Latin / CP1252-style charset preset.
+- Extended charset preset.
 - Custom charset support.
 - Configurable fallback character.
 - Configurable padding character.
@@ -187,10 +162,7 @@ Initial public alpha release.
 - Configurable segment size.
 - Configurable segment gap.
 - Configurable segment radius.
-- Configurable hinge line.
-- Configurable pin visibility.
 - Configurable animation timing.
-- Configurable flip mode: `cycle`, `shortest`, and `direct`.
 - Built-in themes:
   - `kiosk_gold`
   - `classic_airport`
@@ -199,16 +171,13 @@ Initial public alpha release.
 - Basic Home Assistant visual editor support.
 - HACS-compatible dashboard plugin structure.
 - Manual installation support.
-- Documentation for installation, configuration, examples, charsets, icon tokens, themes, troubleshooting, HACS, development, and support.
 
 ### Known limitations
 
-- This project is currently alpha.
+- Early alpha documentation and feature planning may not exactly match later beta implementation.
 - The configuration API may change before `v1.0.0`.
 - Visual editor grouping is still basic.
-- Very large charsets may make `cycle` animation slower.
-- MDI icon availability depends on the Home Assistant frontend version.
-- Emoji rendering may vary between browsers and devices.
+- Very large charsets may make cycle animation slower.
 - Fonts must support the characters used by the selected charset.
 - Some advanced layouts may require YAML configuration.
 
@@ -261,7 +230,7 @@ Beta releases are more stable testing releases.
 Example:
 
 ```text
-v0.1.0-beta.1
+v0.1.0-beta.2
 ```
 
 Beta releases should aim for:
