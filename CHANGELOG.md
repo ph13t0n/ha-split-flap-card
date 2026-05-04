@@ -9,7 +9,7 @@ Recommended version format:
 ```text
 v0.1.0-alpha.1
 v0.1.0-alpha.2
-v0.2.0-beta.1
+v0.1.0-beta.1
 v1.0.0
 ```
 
@@ -24,6 +24,94 @@ v1.0.0
 ### Changed
 
 - Nothing yet.
+
+---
+
+## v0.1.0-beta.1
+
+First public beta milestone.
+
+This release moves **Split-Flap Card** from alpha to beta. It marks a major step from early experiment toward broader HACS testing, with a redesigned visual editor, improved mechanical rendering, built-in high-contrast themes, typography controls, animation tuning and a structured support/reporting flow.
+
+### Milestone
+
+- Moved project status from alpha to beta.
+- Introduced the first beta-ready visual editor experience.
+- Established a more polished transit/airport/wayfinding design direction.
+
+### Added
+
+- Added redesigned visual editor with guided sections:
+  - Content
+  - Appearance
+  - Motion
+  - Advanced
+- Added dark Classic Airport / terminal-inspired editor UI.
+- Added typography selector with visual previews.
+- Added typography presets:
+  - `theme_default`
+  - `mechanical`
+  - `transit`
+  - `clean`
+  - `mono`
+  - `custom`
+- Added optional custom font support through:
+  - `font_family`
+  - `font_stylesheet`
+- Added custom font license/right-to-use notice in the editor/manual.
+- Added `letter_vertical_offset` for moving letters up/down inside each flap.
+- Added advanced animation controls with millisecond labels.
+- Added improved built-in themes:
+  - `mechanical_gold` / Default Mechanical Gold
+  - `classic_airport`
+  - `terminal_amber`
+  - `nordic_light`
+  - `monochrome`
+  - `home_assistant_blue`
+  - `sweden_delight`
+- Added Manual & Help links in the visual editor.
+- Added Report issue helper in the visual editor.
+- Added locally generated diagnostic issue text based on `SUPPORT.md`.
+- Added privacy-aware redaction for sensitive-looking support data.
+- Added consent checkbox before opening a GitHub issue.
+- Added Copy issue text action.
+- Added GitHub issue draft action.
+- Added `docs/UI_EDITOR_MANUAL.md`.
+- Added `docs/FUTURE_PROJECTS.md` for later community library ideas.
+- Added `docs/RELEASE_CANDIDATE_DECISIONS.md` for release candidate decisions.
+
+### Changed
+
+- Changed default visual direction to crisper split-flap lettering.
+- Changed default `text_glow` to `off` for sharper, more readable text.
+- Changed theme behavior so themes primarily affect flaps/segments and text rather than the entire card background.
+- Changed editor interaction color to a high-contrast airport/signage yellow.
+- Changed editor layout to a more step-based flow.
+- Changed theme names shown to users to be more descriptive.
+- Changed package version to `0.1.0-beta.1`.
+- Updated README status from alpha to beta.
+
+### Fixed
+
+- Fixed theme selection not visibly applying theme colors.
+- Fixed confusing Custom animation behavior by opening Advanced mode when Custom is selected.
+- Fixed Custom/Advanced logic so automatically opened Advanced mode can close again when leaving Custom.
+- Fixed typography selection being unclear by adding visual preview cards/dropdown behavior.
+- Fixed helper links so the editor links to the UI editor manual instead of only the repository root.
+- Fixed unclear field states by improving placeholder and editable field styling.
+- Fixed incomplete local help text for editor sections.
+
+### Security
+
+- Added redaction for sensitive-looking data in generated issue reports, including emails, URLs, IP addresses, tokens, secrets, passwords, API keys, webhook-like fields and location fields.
+- Issue reports are not sent automatically. The user must review the generated text and open/submit the GitHub issue manually.
+
+### Notes
+
+- This is still a beta release. Configuration may still evolve before `v1.0.0`.
+- Refresh the Home Assistant dashboard after updating.
+- Clear browser/app cache if the old version is still loaded.
+- Symbol packs, two-slot icon segments and the future community library are planned future work and are not part of this beta release.
 
 ---
 
@@ -173,7 +261,7 @@ Beta releases are more stable testing releases.
 Example:
 
 ```text
-v0.2.0-beta.1
+v0.1.0-beta.1
 ```
 
 Beta releases should aim for:
