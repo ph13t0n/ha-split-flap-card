@@ -28,6 +28,51 @@ v1.0.0
 
 ---
 
+## v0.1.0-beta.5
+
+Editor support and mobile usability release.
+
+This release restores the in-editor support/report issue workflow and improves the visual editor behavior on mobile devices.
+
+### Added
+
+- Restored the **Report issue** support modal inside the visual editor.
+- Added locally generated diagnostic issue text.
+- Added copy-to-clipboard support for generated issue reports.
+- Added GitHub issue opening with generated issue body after explicit review confirmation.
+- Added visible diagnostics for:
+  - card version
+  - card/resource URL
+  - installation method
+  - selected Split-Flap theme
+  - active Home Assistant frontend theme when available
+  - light/dark mode when available
+  - Home Assistant version when available
+  - browser/device information
+  - selected card source, charset, font preset and animation feel
+- Added a compact card theme / Home Assistant theme information block in the Appearance section.
+
+### Changed
+
+- Changed visual editor text and number inputs so they no longer rebuild the full editor on every typed character.
+- Improved external link handling for Manual, Support and GitHub issue links in Home Assistant mobile/web contexts.
+- Changed advanced styling fields to show default guidance as placeholders where possible.
+- Bumped `package.json` to `0.1.0-beta.5`.
+
+### Fixed
+
+- Fixed the visual editor jumping back to the top while typing in fields on mobile.
+- Fixed the missing in-editor support/report issue card workflow.
+
+### Notes
+
+- Diagnostic information is generated locally. Nothing is sent automatically.
+- Users must review the generated issue text before opening GitHub Issues.
+- Refresh the Home Assistant dashboard after updating.
+- Clear browser/app cache if the old version is still loaded.
+
+---
+
 ## v0.1.0-beta.2
 
 Documentation correction release.
