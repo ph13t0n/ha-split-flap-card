@@ -13,10 +13,10 @@
   <a href="https://github.com/ph13t0n/ha-split-flap-card/issues"><img alt="Issues" src="https://img.shields.io/github/issues/ph13t0n/ha-split-flap-card"></a>
 </p>
 
-> **Latest recommended version:** `v0.1.0-beta.10`  
-> **Status:** Beta maintenance release  
-> **What changed:** clarifies HACS metadata, release visibility and project presentation after the emergency beta hotfixes.  
-> [Read release notes →](https://github.com/ph13t0n/ha-split-flap-card/releases/tag/v0.1.0-beta.10)
+> **Latest recommended version:** `v0.1.0-beta.11`  
+> **Status:** Beta metadata hotfix  
+> **What changed:** hides default-branch downloads in HACS metadata so HACS should prefer tagged GitHub releases instead of loose commit updates.  
+> [Read release notes →](https://github.com/ph13t0n/ha-split-flap-card/releases/tag/v0.1.0-beta.11)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/ph13t0n/ha-split-flap-card/main/docs/assets/images/split-flap-card-beta-preview.svg" alt="Split-Flap Card beta preview" width="100%">
@@ -24,13 +24,13 @@
 
 ## Status
 
-> **Status:** Beta — `v0.1.0-beta.10`
+> **Status:** Beta — `v0.1.0-beta.11`
 
 Split-Flap Card is currently in beta. The configuration API may still evolve before `v1.0.0`, but the project is suitable for broader testing through HACS.
 
-`v0.1.0-beta.10` is a maintenance pre-release focused on HACS metadata, release visibility and project presentation after the emergency beta hotfixes.
+`v0.1.0-beta.11` is a HACS metadata hotfix focused on hiding default-branch downloads so users are not prompted to update from a clear release version to a commit hash.
 
-`v0.1.0-beta.7`, `v0.1.0-beta.8` and `v0.1.0-beta.9` should be considered superseded by the latest beta maintenance release.
+`v0.1.0-beta.7`, `v0.1.0-beta.8`, `v0.1.0-beta.9` and `v0.1.0-beta.10` should be considered superseded by the latest beta metadata hotfix.
 
 ## Overview
 
@@ -47,6 +47,8 @@ The visual direction is inspired by mechanical transit displays, airport signage
 - Self-contained HACS-loaded root file.
 - Direct registration of `custom:split-flap-card`.
 - Direct registration of the visual editor.
+- HACS metadata configured with `content_in_root: true`.
+- HACS metadata configured with `hide_default_branch: true`.
 - Visual editor for common options.
 - Advanced styling section in the editor.
 - Mechanical split-flap rendering.
@@ -123,7 +125,7 @@ type: module
 For manual testing after updates, change the cache query:
 
 ```yaml
-url: /local/ha-split-flap-card.js?v=0.1.0-beta.10
+url: /local/ha-split-flap-card.js?v=0.1.0-beta.11
 type: module
 ```
 
@@ -231,7 +233,7 @@ theme: mechanical_gold
 
 ## Maintenance note
 
-`v0.1.0-beta.10` intentionally prioritizes release hygiene, HACS metadata and project presentation.
+`v0.1.0-beta.11` intentionally prioritizes HACS metadata and release-channel hygiene.
 
 Deferred items:
 
