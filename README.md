@@ -19,13 +19,11 @@
 
 ## Status
 
-> **Status:** Beta — `v0.1.0-beta.2`
+> **Status:** Beta — `v0.1.0-beta.7`
 
-Split-Flap Card is currently in beta.
+Split-Flap Card is currently in beta. The configuration API may still evolve before `v1.0.0`, but the project is suitable for broader testing through HACS.
 
-This beta includes a visual editor for common options, configurable split-flap rendering, multiple charset presets, animation controls, built-in high-contrast themes and HACS-compatible installation.
-
-The configuration API may still evolve before `v1.0.0`, but the project is now suitable for broader testing through HACS.
+`v0.1.0-beta.7` focuses on visual editor branding, compact support branding, mobile-friendly signed number input, 24h/12h clock options, and adaptive segment handling for text, entity and clock sources.
 
 ## Overview
 
@@ -35,71 +33,61 @@ The visual direction is inspired by mechanical transit displays, airport signage
 
 ## Current beta features
 
-- Static text mode
-- Entity state mode
-- Entity attribute mode
-- Browser clock mode
-- Visual editor for common options
-- Mechanical split-flap animation
-- Initial animation from blank state
-- Configurable animation feel
-- Advanced animation timing controls through YAML
-- `segments` and `max_chars`
-- Swedish charset support with `Å`, `Ä`, `Ö`
-- Nordic charset support
-- Western European charset support
-- Weather charset support with `°`
-- Extended charset preset
-- Custom charset
-- Configurable colors through YAML
-- Configurable segment size through YAML
-- Configurable font family, size and weight through YAML
+- Static text mode.
+- Entity state mode.
+- Entity attribute mode.
+- Browser clock mode.
+- 24-hour clock mode.
+- 12-hour AM/PM clock mode.
+- Adaptive segment handling with `segments_mode: auto`.
+- Manual segment override with `segments_mode: manual` and `segments`.
+- Visual editor for common options.
+- Primary logo branding in the visual editor header.
+- Micro logo / wordmark branding in the support/report issue modal.
+- Mechanical split-flap rendering.
+- Initial animation-related configuration compatibility.
+- Swedish charset support with `Å`, `Ä`, `Ö`.
+- Nordic charset support.
+- Western European charset support.
+- Weather charset support with `°`.
+- Extended charset preset.
+- Custom charset support.
+- Configurable colors.
+- Configurable segment size.
+- Configurable font family, size and weight.
+- Mobile-friendly signed controls for values such as `letter_vertical_offset` and `letter_spacing`.
 - Built-in themes:
-  - `classic`
+  - `mechanical_gold`
   - `kiosk_gold`
   - `classic_airport`
   - `terminal_amber`
   - `monochrome`
-- HACS-compatible dashboard plugin structure
+  - `home_assistant_blue`
+  - `sweden_delight`
+- HACS-compatible dashboard plugin structure.
 
 ## Visual editor options
 
-The visual editor currently exposes the most important configuration fields:
+The visual editor exposes the most important configuration fields:
 
 - `source`
 - `text`
 - `entity`
 - `attribute`
+- `clock_mode`
 - `clock_format`
 - `clock_tick_interval`
+- `segments_mode`
+- `segments`
 - `language`
 - `charset`
-- `custom_charset`
-- `segments`
 - `theme`
 - `align`
 - `text_transform`
-- `animation`
-- `cycle_chars`
-- `flip_duration`
-- `flip_stagger`
+- `letter_vertical_offset`
+- `letter_spacing`
 
 Advanced styling options can still be edited directly in YAML.
-
-## Not included yet
-
-These are planned or future-facing ideas and should not block the beta release:
-
-- Auto-paging
-- MDI/icon token rendering
-- Symbol packs for arrows, gates, check-in, information, security, baggage and wayfinding icons
-- Two-slot square symbol segments
-- Built-in typography presets
-- Custom stylesheet/font URL loader
-- In-editor issue report helper
-- Community library for shared themes and presets
-- Direct in-editor import from a future community library
-- Full stable `v1.0.0` API guarantee
 
 ## Installation
 
@@ -142,7 +130,7 @@ type: module
 For manual testing after updates, change the cache query:
 
 ```yaml
-url: /local/ha-split-flap-card.js?v=0.1.0-beta.2
+url: /local/ha-split-flap-card.js?v=0.1.0-beta.7
 type: module
 ```
 
@@ -152,27 +140,21 @@ type: module
 type: custom:split-flap-card
 source: text
 text: CENTRAL STATION
-segments: 16
-theme: kiosk_gold
+segments_mode: auto
+theme: mechanical_gold
 ```
 
-## Kiosk gold example
+## Text example with automatic segments
 
 ```yaml
 type: custom:split-flap-card
 source: text
 text: SPLIT-FLAP CARD
-segments: 16
-theme: kiosk_gold
-animation: true
-initial_animation: true
-cycle_chars: true
-cycle_count: 2
-flip_duration: 760
-flip_stagger: 45
+segments_mode: auto
+theme: mechanical_gold
 ```
 
-## Swedish example
+## Text example with manual segments
 
 ```yaml
 type: custom:split-flap-card
@@ -180,6 +162,7 @@ source: text
 text: NÄSSJÖ CENTRAL
 language: sv
 charset: sv
+segments_mode: manual
 segments: 14
 theme: kiosk_gold
 ```
@@ -192,7 +175,7 @@ source: entity
 entity: input_text.split_flap_message
 language: sv
 charset: sv
-segments: 24
+segments_mode: auto
 theme: classic_airport
 ```
 
@@ -204,22 +187,30 @@ source: entity
 entity: weather.home
 attribute: temperature
 charset: weather
-segments: 6
+segments_mode: auto
 theme: terminal_amber
 ```
 
-## Clock example
+## 24-hour clock example
 
 ```yaml
 type: custom:split-flap-card
 source: clock
-clock_format: HH:mm:ss
-clock_tick_interval: 1000
-charset: custom
-custom_charset: " 0123456789:"
-segments: 8
-theme: kiosk_gold
-cycle_chars: false
+clock_mode: 24h
+clock_format: HH:mm
+segments_mode: auto
+theme: mechanical_gold
+```
+
+## 12-hour clock example
+
+```yaml
+type: custom:split-flap-card
+source: clock
+clock_mode: 12h
+clock_format: h:mm A
+segments_mode: auto
+theme: mechanical_gold
 ```
 
 ## Configuration
@@ -230,56 +221,47 @@ cycle_chars: false
 | `text` | string | — | Static text to display |
 | `entity` | string | — | Entity state to display |
 | `attribute` | string | — | Entity attribute to display |
-| `clock_format` | string | `HH:mm` | Clock format using `HH`, `H`, `mm`, `ss` |
+| `clock_mode` | string | `24h` | `24h` or `12h` |
+| `clock_format` | string | `HH:mm` | Clock format using `HH`, `H`, `hh`, `h`, `mm`, `ss`, `A` |
 | `clock_tick_interval` | number | `1000` | Clock update interval in milliseconds |
-| `language` | string | `en` | Language hint |
-| `charset` | string | language value | `en`, `sv`, `nordic`, `western`, `weather`, `weather_sv`, `extended`, `custom` |
+| `segments_mode` | string | `auto` | `auto` follows output length, `manual` uses `segments` |
+| `segments` | number | `16` | Number of displayed segments when `segments_mode: manual` |
+| `language` | string | `sv` | Language hint |
+| `charset` | string | `sv` | `en`, `sv`, `nordic`, `western`, `weather`, `weather_sv`, `extended`, `custom` |
 | `custom_charset` | string | — | Custom charset when using `charset: custom` |
 | `text_transform` | string | `uppercase` | `uppercase`, `lowercase`, or `none` |
-| `fallback_character` | string | space | Character used when input is unsupported |
-| `pad_character` | string | space | Character used to pad empty segments |
+| `pad_character` | string | space | Character used to pad empty manual segments |
 | `pad_mode` | string | `end` | `start` or `end` padding |
-| `segments` | number | text length | Number of displayed segments |
-| `max_chars` | number | — | Legacy alias for `segments` |
-| `max_segments` | number | `96` | Safety limit for automatic segment count |
-| `theme` | string | `classic` | `classic`, `kiosk_gold`, `classic_airport`, `terminal_amber`, `monochrome` |
-| `card_background` | string | `#050505` | Card background color |
-| `card_border_radius` | number | `16` | Card border radius in pixels |
-| `card_padding` | number | `16` | Card padding in pixels |
-| `segment_background` | string | `#111111` | Segment background color |
-| `segment_background_top` | string | `#1b1b1b` | Top flap background color |
-| `segment_background_bottom` | string | `#090909` | Bottom flap background color |
-| `segment_separator_color` | string | `#000000` | Split line color |
-| `segment_border_color` | string | `#2a2a2a` | Segment border color |
-| `text_color` | string | `#dcb215` | Text color |
-| `font_family` | string | `Roboto Mono, monospace` | CSS font-family |
-| `font_size` | number | `44` | Text size in pixels |
-| `font_weight` | number/string | `800` | Text weight |
+| `theme` | string | `mechanical_gold` | Built-in theme |
+| `card_background` | string | `#030303` | Card background color |
+| `segment_background` | string | theme | Segment background color |
+| `segment_background_top` | string | theme | Top flap background color |
+| `segment_background_bottom` | string | theme | Bottom flap background color |
+| `segment_separator_color` | string | theme | Split line color |
+| `segment_border_color` | string | theme | Segment border color |
+| `text_color` | string | theme | Text color |
+| `font_family` | string | theme | CSS font-family |
+| `font_size` | number | `60` | Text size in pixels |
+| `font_weight` | number/string | theme | Text weight |
+| `letter_spacing` | number | `-1` | Letter spacing adjustment |
+| `letter_vertical_offset` | number | `-9` | Vertical letter offset inside the flap |
 | `segment_width` | number | `48` | Segment width in pixels |
-| `segment_height` | number | `72` | Segment height in pixels |
+| `segment_height` | number | `78` | Segment height in pixels |
 | `segment_gap` | number | `6` | Gap between segments in pixels |
-| `segment_radius` | number | `6` | Segment corner radius in pixels |
+| `segment_radius` | number | `7` | Segment corner radius in pixels |
 | `align` | string | `center` | `left`, `center`, or `right` |
-| `animation` | boolean | `true` | Enable split-flap animation |
-| `initial_animation` | boolean | `true` | Animate from blank on first render |
-| `cycle_chars` | boolean | `true` | Show intermediate characters |
-| `cycle_count` | number | `2` | Number of intermediate characters |
-| `flip_duration` | number | `520` | Flip duration in milliseconds |
-| `flip_stagger` | number | `45` | Delay between segment flips in milliseconds |
 
-## Custom fonts
+## Notes about adaptive segments
 
-Custom fonts can be used by setting `font_family` to a CSS font stack that is already available in Home Assistant or loaded by your browser/theme.
+`segments_mode: auto` is recommended for most use cases. It automatically adapts the displayed segment count to the current output length.
 
-```yaml
-font_family: "Roboto Condensed, Arial Narrow, sans-serif"
-font_size: 52
-font_weight: 900
-```
+This is especially useful for:
 
-This beta does not include a built-in `font_stylesheet` loader. If you use custom fonts, make sure they are loaded through your Home Assistant setup, theme or browser environment.
+- Text values with varying length.
+- Entity states and attributes.
+- Clock formats such as `HH:mm`, `HH:mm:ss`, `h:mm A`, and `hh:mm A`.
 
-You are responsible for making sure you have the correct rights and licenses for any font you load or upload.
+Use `segments_mode: manual` when you want a fixed display width.
 
 ## Documentation
 
@@ -294,11 +276,11 @@ Use GitHub Issues for bug reports, feature requests and support questions.
 
 When reporting an issue, include:
 
-- Home Assistant version
-- Browser or app
-- Card version
-- Your card YAML
-- A screenshot, if visual rendering is part of the issue
+- Home Assistant version.
+- Browser or app.
+- Card version.
+- Your card YAML.
+- A screenshot, if visual rendering is part of the issue.
 
 Avoid sharing screenshots or YAML containing private entity names, tokens, addresses or private URLs.
 
@@ -316,11 +298,11 @@ This is a frontend-only dashboard card.
 
 It does not:
 
-- Store credentials
-- Require Home Assistant long-lived access tokens
-- Modify Home Assistant configuration
-- Create entities or services
-- Submit issue reports automatically
+- Store credentials.
+- Require Home Assistant long-lived access tokens.
+- Modify Home Assistant configuration.
+- Create entities or services.
+- Submit issue reports automatically.
 
 Avoid sharing screenshots or YAML containing private entity names, tokens, addresses or private URLs.
 
