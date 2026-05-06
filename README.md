@@ -13,10 +13,10 @@
   <a href="https://github.com/ph13t0n/ha-split-flap-card/issues"><img alt="Issues" src="https://img.shields.io/github/issues/ph13t0n/ha-split-flap-card"></a>
 </p>
 
-> **Latest recommended version:** `v0.1.0-beta.9`  
-> **Status:** Emergency beta hotfix  
-> **What changed:** restores `custom:split-flap-card` registration and self-contained HACS loading.  
-> [Read release notes →](https://github.com/ph13t0n/ha-split-flap-card/releases/tag/v0.1.0-beta.9)
+> **Latest recommended version:** `v0.1.0-beta.10`  
+> **Status:** Beta maintenance release  
+> **What changed:** clarifies HACS metadata, release visibility and project presentation after the emergency beta hotfixes.  
+> [Read release notes →](https://github.com/ph13t0n/ha-split-flap-card/releases/tag/v0.1.0-beta.10)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/ph13t0n/ha-split-flap-card/main/docs/assets/images/split-flap-card-beta-preview.svg" alt="Split-Flap Card beta preview" width="100%">
@@ -24,13 +24,13 @@
 
 ## Status
 
-> **Status:** Beta — `v0.1.0-beta.9`
+> **Status:** Beta — `v0.1.0-beta.10`
 
 Split-Flap Card is currently in beta. The configuration API may still evolve before `v1.0.0`, but the project is suitable for broader testing through HACS.
 
-`v0.1.0-beta.9` is an emergency hotfix for `v0.1.0-beta.8`. It restores `custom:split-flap-card` registration by making the HACS-loaded root file self-contained again.
+`v0.1.0-beta.10` is a maintenance pre-release focused on HACS metadata, release visibility and project presentation after the emergency beta hotfixes.
 
-`v0.1.0-beta.8` and `v0.1.0-beta.7` should be considered superseded.
+`v0.1.0-beta.7`, `v0.1.0-beta.8` and `v0.1.0-beta.9` should be considered superseded by the latest beta maintenance release.
 
 ## Overview
 
@@ -123,7 +123,7 @@ type: module
 For manual testing after updates, change the cache query:
 
 ```yaml
-url: /local/ha-split-flap-card.js?v=0.1.0-beta.9
+url: /local/ha-split-flap-card.js?v=0.1.0-beta.10
 type: module
 ```
 
@@ -229,9 +229,9 @@ theme: mechanical_gold
 | `segment_radius` | number | `7` | Segment corner radius in pixels |
 | `align` | string | `center` | `left`, `center`, or `right` |
 
-## Hotfix note
+## Maintenance note
 
-`v0.1.0-beta.9` intentionally prioritizes restoring the custom element registration and HACS loading path.
+`v0.1.0-beta.10` intentionally prioritizes release hygiene, HACS metadata and project presentation.
 
 Deferred items:
 
