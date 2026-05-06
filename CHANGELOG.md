@@ -28,6 +28,36 @@ v1.0.0
 
 ---
 
+## v0.1.0-beta.8
+
+Emergency hotfix for `v0.1.0-beta.7`.
+
+This release restores the previous working visual editor layout and support workflow after the beta 7 editor redesign broke the intended editor design.
+
+### Changed
+
+- Restored the previous working beta/canary editor runtime.
+- Reverted the simplified beta 7 visual editor layout that introduced large buttons, missing advanced styling, and a broken support card layout.
+- Bumped card/package version to `0.1.0-beta.8`.
+- Updated README to clearly mark beta 8 as a hotfix.
+
+### Fixed
+
+- Fixed the broken visual editor layout introduced in beta 7.
+- Fixed the missing/changed Advanced styling section caused by beta 7.
+- Fixed the simplified support section that replaced the intended support/report issue workflow.
+- Restored the earlier editor structure with Content, Appearance, Motion, Advanced styling, Manual, Support, Report issue, and preview.
+
+### Notes
+
+- This is a pre-release / beta hotfix build.
+- `v0.1.0-beta.7` should be considered superseded by this hotfix.
+- The planned beta 7 features are deferred until they can be added without changing or breaking the working editor layout.
+- Refresh the Home Assistant dashboard after updating.
+- Clear browser/app cache if the previous version still appears.
+
+---
+
 ## v0.1.0-beta.5
 
 Editor support and mobile usability release.
@@ -184,7 +214,7 @@ Initial public alpha release.
 - Home Assistant Lovelace custom card for split-flap style displays.
 - Static text display mode.
 - Entity state display mode.
-- Entity attribute display mode.
+- Entity attribute mode.
 - Built-in clock mode.
 - Mechanical split-flap animation engine.
 - English charset preset.
