@@ -27,7 +27,6 @@ class HASplitFlapCard extends HTMLElement {
       source: "text",
       text: "SPLIT-FLAP TEST",
       segments_mode: "auto",
-      segments: 16,
       theme: "mechanical_gold",
       font_preset: "theme_default",
       letter_vertical_offset: -9
@@ -44,6 +43,8 @@ class HASplitFlapCard extends HTMLElement {
     this._config = {};
     this._hass = null;
     this._timer = null;
+    this._lastDisplayText = null;
+    this._hasRendered = false;
   }
 
   setConfig(config) {
@@ -52,6 +53,7 @@ class HASplitFlapCard extends HTMLElement {
     const source = this._inferSource(config);
     const theme = SFC_THEMES[config.theme] || SFC_THEMES.mechanical_gold;
     const preset = SFC_FONT_PRESETS[config.font_preset || "theme_default"] || SFC_FONT_PRESETS.theme_default;
+    const previousSignature = this._config ? this._renderSignature(this._config) : "";
 
     this._config = {
       source,
@@ -77,6 +79,9 @@ class HASplitFlapCard extends HTMLElement {
       pad_mode: "end",
       clock_format: "HH:mm",
       clock_tick_interval: 1000,
+      animation: true,
+      initial_animation: true,
+      cycle_chars: true,
       segment_width: 48,
       segment_height: 78,
       segment_gap: 6,
@@ -98,6 +103,12 @@ class HASplitFlapCard extends HTMLElement {
       this._config.font_weight = theme.weight;
     }
 
+    const nextSignature = this._renderSignature(this._config);
+    if (previousSignature && previousSignature !== nextSignature) {
+      this._lastDisplayText = null;
+      this._hasRendered = false;
+    }
+
     this._restartClock();
     this._render();
   }
@@ -113,6 +124,26 @@ class HASplitFlapCard extends HTMLElement {
 
   getCardSize() {
     return 2;
+  }
+
+  _renderSignature(config) {
+    return [
+      config.theme,
+      config.font_preset,
+      config.font_family,
+      config.font_size,
+      config.font_weight,
+      config.segment_width,
+      config.segment_height,
+      config.segment_gap,
+      config.segment_radius,
+      config.letter_spacing,
+      config.letter_vertical_offset,
+      config.text_color,
+      config.segments_mode,
+      config.segments,
+      config.source
+    ].join("|");
   }
 
   _inferSource(config) {
@@ -179,13 +210,30 @@ class HASplitFlapCard extends HTMLElement {
   }
 
   _render() {
-    const tiles = Array.from(this._displayText()).map((ch) => this._tile(ch)).join("");
+    const displayText = this._displayText();
+    const previous = this._lastDisplayText;
+    const animationEnabled = this._config.animation !== false;
+    const initialEnabled = this._config.initial_animation !== false;
+
+    const tiles = Array.from(displayText).map((ch, index) => {
+      const previousChar = previous ? Array.from(previous)[index] : undefined;
+      const changed = animationEnabled && (
+        (previous == null && initialEnabled && ch !== " ") ||
+        (previous != null && previousChar !== ch)
+      );
+      return this._tile(ch, changed);
+    }).join("");
+
+    this._lastDisplayText = displayText;
+    this._hasRendered = true;
+
     this.shadowRoot.innerHTML = `${this._styles()}<ha-card><div class="display-shell"><div class="display" style="justify-content:${this._align(this._config.align)}">${tiles}</div></div></ha-card>`;
   }
 
-  _tile(ch) {
+  _tile(ch, changed = false) {
     const escaped = this._e(ch);
-    return `<div class="tile${ch === " " ? " space" : ""}"><div class="flap top"><span>${escaped}</span></div><div class="flap bottom"><span>${escaped}</span></div><div class="hinge"></div><div class="pin left"></div><div class="pin right"></div></div>`;
+    const classes = ["tile", ch === " " ? "space" : "", changed ? "flip" : ""].filter(Boolean).join(" ");
+    return `<div class="${classes}"><div class="flap top"><span>${escaped}</span></div><div class="flap bottom"><span>${escaped}</span></div><div class="hinge"></div><div class="pin left"></div><div class="pin right"></div></div>`;
   }
 
   _styles() {
@@ -203,17 +251,23 @@ class HASplitFlapCard extends HTMLElement {
       :host{display:block}
       ha-card{overflow:hidden;border-radius:16px;background:${this._css(c.card_background, "#030303")};padding:16px}
       .display-shell{box-sizing:border-box;width:100%;border-radius:${Math.max(radius + 6, 10)}px;background:${this._css(c.frame_background, "#050505")};border:1px solid rgba(255,255,255,.08);padding:${Math.max(8, Math.round(gap * 2))}px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.8),0 14px 30px rgba(0,0,0,.45)}
-      .display{display:flex;align-items:center;gap:${gap}px;min-width:0;overflow:hidden}
-      .tile{position:relative;flex:0 0 ${width}px;width:${width}px;height:${height}px;border-radius:${radius}px;overflow:hidden;background:${this._css(c.segment_background, "#101010")};border:1px solid ${this._css(c.segment_border_color, "#313131")};box-shadow:inset 0 1px 0 rgba(255,255,255,.07),inset 0 -12px 18px rgba(0,0,0,.38),0 4px 10px rgba(0,0,0,.6)}
+      .display{display:flex;align-items:center;gap:${gap}px;min-width:0;overflow:hidden;perspective:900px}
+      .tile{position:relative;flex:0 0 ${width}px;width:${width}px;height:${height}px;border-radius:${radius}px;overflow:hidden;background:${this._css(c.segment_background, "#101010")};border:1px solid ${this._css(c.segment_border_color, "#313131")};box-shadow:inset 0 1px 0 rgba(255,255,255,.07),inset 0 -12px 18px rgba(0,0,0,.38),0 4px 10px rgba(0,0,0,.6);transform-style:preserve-3d}
       .space{opacity:.82}
-      .flap{position:absolute;left:0;right:0;height:50%;overflow:hidden;display:flex;justify-content:center;color:${this._css(c.text_color, "#ffc02e")};font-family:${this._font(c.font_family)};font-size:${fontSize}px;font-weight:${this._weight(c.font_weight)};font-style:${c.font_style === "italic" ? "italic" : "normal"};letter-spacing:${letterSpacing}px;line-height:1;${glow}}
-      .top{top:0;align-items:flex-end;background:linear-gradient(180deg,${this._css(c.segment_background_top, "#252525")},${this._css(c.segment_background, "#101010")})}
-      .bottom{bottom:0;align-items:flex-start;background:linear-gradient(180deg,${this._css(c.segment_background, "#101010")},${this._css(c.segment_background_bottom, "#080808")})}
+      .flap{position:absolute;left:0;right:0;height:50%;overflow:hidden;display:flex;justify-content:center;color:${this._css(c.text_color, "#ffc02e")};font-family:${this._font(c.font_family)};font-size:${fontSize}px;font-weight:${this._weight(c.font_weight)};font-style:${c.font_style === "italic" ? "italic" : "normal"};letter-spacing:${letterSpacing}px;line-height:1;backface-visibility:hidden;transform-style:preserve-3d;${glow}}
+      .top{top:0;align-items:flex-end;transform-origin:bottom center;background:linear-gradient(180deg,${this._css(c.segment_background_top, "#252525")},${this._css(c.segment_background, "#101010")})}
+      .bottom{bottom:0;align-items:flex-start;transform-origin:top center;background:linear-gradient(180deg,${this._css(c.segment_background, "#101010")},${this._css(c.segment_background_bottom, "#080808")})}
       .top span{transform:translateY(calc(50% + ${verticalOffset}px))}
       .bottom span{transform:translateY(calc(-50% + ${verticalOffset}px))}
       .hinge{position:absolute;left:0;right:0;top:calc(50% - 1px);height:2px;background:${this._css(c.segment_separator_color, "#010101")};z-index:8}
       .pin{position:absolute;z-index:9;top:calc(50% - 2px);width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.17)}
       .left{left:4px}.right{right:4px}
+      .tile.flip .top{animation:sfcFlipTop .34s cubic-bezier(.34,.02,.2,1)}
+      .tile.flip .bottom{animation:sfcFlipBottom .34s cubic-bezier(.34,.02,.2,1) .08s both}
+      .tile.flip .hinge{animation:sfcHingePulse .42s ease-out}
+      @keyframes sfcFlipTop{0%{transform:rotateX(0deg);filter:brightness(1.12)}50%{transform:rotateX(-88deg);filter:brightness(.82)}100%{transform:rotateX(0deg);filter:brightness(1)}}
+      @keyframes sfcFlipBottom{0%{transform:rotateX(88deg);filter:brightness(.75)}100%{transform:rotateX(0deg);filter:brightness(1)}}
+      @keyframes sfcHingePulse{0%,100%{opacity:1}50%{opacity:.55}}
     </style>`;
   }
 
@@ -260,7 +314,7 @@ class SplitFlapCardEditor extends HTMLElement {
   _set(key, value, render = true) {
     const next = { ...this._config, [key]: value };
 
-    if (value === "" && !["text", "entity", "attribute", "font_family", "font_stylesheet"].includes(key)) {
+    if (value === "" && !["text", "entity", "attribute", "font_family", "font_stylesheet", "clock_format"].includes(key)) {
       delete next[key];
     }
 
@@ -287,6 +341,25 @@ class SplitFlapCardEditor extends HTMLElement {
       this._updateSummary();
       this._updateDiagnostics();
     }
+  }
+
+  _setDraft(key, value) {
+    this._config = { ...this._config, [key]: value };
+    this._updateSummary();
+    this._updateDiagnostics();
+  }
+
+  _numDraft(key, value) {
+    const next = { ...this._config };
+    if (value === "") delete next[key];
+    else {
+      const n = Number(value);
+      if (Number.isFinite(n)) next[key] = n;
+      else next[key] = value;
+    }
+    this._config = next;
+    this._updateSummary();
+    this._updateDiagnostics();
   }
 
   _num(key, value, render = false) {
@@ -328,7 +401,7 @@ class SplitFlapCardEditor extends HTMLElement {
             <strong>Split-Flap Card</strong>
             <span>${SPLIT_FLAP_CARD_VERSION}</span>
           </div>
-          <div class="hint">Beta 12 stability branch. The native Home Assistant preview below the editor is the active preview.</div>
+          <div class="hint">Beta 12 stability branch. Text fields commit after leaving the field to prevent mobile focus loss.</div>
         </div>
 
         <section class="section">
@@ -430,18 +503,15 @@ class SplitFlapCardEditor extends HTMLElement {
     });
 
     this.shadowRoot.querySelectorAll("input[data-k]").forEach((element) => {
-      element.oninput = () => {
-        this._config = { ...this._config, [element.dataset.k]: element.value };
-        this._fire();
-        this._updateSummary();
-        this._updateDiagnostics();
-      };
+      element.oninput = () => this._setDraft(element.dataset.k, element.value);
       element.onchange = () => this._set(element.dataset.k, element.value, false);
+      element.onblur = () => this._set(element.dataset.k, element.value, false);
     });
 
     this.shadowRoot.querySelectorAll("input[data-n]").forEach((element) => {
-      element.oninput = () => this._num(element.dataset.n, element.value, false);
+      element.oninput = () => this._numDraft(element.dataset.n, element.value);
       element.onchange = () => this._num(element.dataset.n, element.value, false);
+      element.onblur = () => this._num(element.dataset.n, element.value, false);
     });
 
     this.shadowRoot.querySelectorAll("input[data-b]").forEach((element) => {
@@ -512,7 +582,7 @@ class SplitFlapCardEditor extends HTMLElement {
   _previewSummary() {
     const mode = this._segmentsMode();
     const segments = mode === "auto" ? `auto (${this._effectivePreviewLength()})` : String(this._v("segments", 16));
-    return `Source: ${this._source()} · Segments: ${segments} · Native Home Assistant preview is shown below this editor.`;
+    return `Source: ${this._source()} · Segments: ${segments} · Native Home Assistant preview updates after the edited field is committed.`;
   }
 
   _presetDescription(presetKey) {
