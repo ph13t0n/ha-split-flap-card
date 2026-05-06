@@ -1,6 +1,6 @@
 import "./dist/ha-split-flap-card-canary-v9.js";
 
-const SPLIT_FLAP_CARD_VERSION = "0.1.0-beta.7";
+const SPLIT_FLAP_CARD_VERSION = "0.1.0-beta.8";
 const SFC_REPO_URL = "https://github.com/ph13t0n/ha-split-flap-card";
 
 const BetaCard = customElements.get("split-flap-card-canary-v9");
