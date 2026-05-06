@@ -244,7 +244,7 @@ class SplitFlapCardEditor extends HTMLElement {
 
   set hass(hass) {
     this._hass = hass;
-    this._updatePreview();
+    this._updateSummary();
     this._updateDiagnostics();
   }
 
@@ -259,22 +259,34 @@ class SplitFlapCardEditor extends HTMLElement {
 
   _set(key, value, render = true) {
     const next = { ...this._config, [key]: value };
-    if (value === "" && !["text", "entity", "attribute", "font_family", "font_stylesheet"].includes(key)) delete next[key];
+
+    if (value === "" && !["text", "entity", "attribute", "font_family", "font_stylesheet"].includes(key)) {
+      delete next[key];
+    }
 
     if (key === "source") {
-      if (value === "text") { delete next.entity; delete next.attribute; }
+      if (value === "text") {
+        delete next.entity;
+        delete next.attribute;
+      }
       if (value === "entity") delete next.text;
-      if (value === "clock") { delete next.text; delete next.entity; delete next.attribute; }
+      if (value === "clock") {
+        delete next.text;
+        delete next.entity;
+        delete next.attribute;
+      }
     }
 
-    if (key === "segments_mode" && value === "auto") {
-      delete next.segments;
-    }
+    if (key === "segments_mode" && value === "auto") delete next.segments;
 
     this._config = next;
     this._fire();
+
     if (render) this._render();
-    else this._updatePreview();
+    else {
+      this._updateSummary();
+      this._updateDiagnostics();
+    }
   }
 
   _num(key, value, render = false) {
@@ -284,14 +296,23 @@ class SplitFlapCardEditor extends HTMLElement {
       const n = Number(value);
       if (Number.isFinite(n)) next[key] = n;
     }
+
     this._config = next;
     this._fire();
+
     if (render) this._render();
-    else this._updatePreview();
+    else {
+      this._updateSummary();
+      this._updateDiagnostics();
+    }
   }
 
   _fire() {
-    this.dispatchEvent(new CustomEvent("config-changed", { bubbles: true, composed: true, detail: { config: this._config } }));
+    this.dispatchEvent(new CustomEvent("config-changed", {
+      bubbles: true,
+      composed: true,
+      detail: { config: this._config }
+    }));
   }
 
   _render() {
@@ -303,8 +324,11 @@ class SplitFlapCardEditor extends HTMLElement {
     this.shadowRoot.innerHTML = `${this._styles()}
       <div class="editor">
         <div class="hero">
-          <div class="hero-title"><strong>Split-Flap Card</strong><span>${SPLIT_FLAP_CARD_VERSION}</span></div>
-          <div class="hint">Editor stability branch. Preview follows selected source. Auto/manual segments are explicit.</div>
+          <div class="hero-title">
+            <strong>Split-Flap Card</strong>
+            <span>${SPLIT_FLAP_CARD_VERSION}</span>
+          </div>
+          <div class="hint">Beta 12 stability branch. The native Home Assistant preview below the editor is the active preview.</div>
         </div>
 
         <section class="section">
@@ -314,7 +338,7 @@ class SplitFlapCardEditor extends HTMLElement {
               ${this._select("source", "Source", source, { text: "Text", entity: "Entity / Sensor", clock: "Clock" })}
               ${this._select("segments_mode", "Segments mode", segmentsMode, { auto: "Auto — follows output length", manual: "Manual — fixed segment count" })}
             </div>
-            ${segmentsMode === "manual" ? this._number("segments", "Segments", this._v("segments", 16), 1, 160, "Default: 16") : this._info("Auto segments", `Current preview length: ${this._effectivePreviewLength()}`)}
+            ${segmentsMode === "manual" ? this._number("segments", "Segments", this._v("segments", 16), 1, 160, "Default: 16") : this._info("Auto segments", `Current output length: ${this._effectivePreviewLength()}`)}
             ${source === "text" ? this._input("text", "Text", this._v("text", ""), "Text to show on the split-flap display") : ""}
             ${source === "entity" ? this._input("entity", "Entity", this._v("entity", ""), "input_text.split_flap_message") + this._input("attribute", "Attribute", this._v("attribute", ""), "Optional attribute") : ""}
             ${source === "clock" ? `<div class="grid">${this._input("clock_format", "Clock format", this._v("clock_format", "HH:mm"), "HH:mm, HH:mm:ss, h:mm A")}${this._number("clock_tick_interval", "Clock tick interval", this._v("clock_tick_interval", 1000), 250, 60000, "Default: 1000")}</div>` : ""}
@@ -332,13 +356,12 @@ class SplitFlapCardEditor extends HTMLElement {
               ${this._select("theme", "Theme", theme, Object.fromEntries(Object.entries(SFC_THEMES).map(([key, value]) => [key, value.label])))}
               ${this._select("align", "Align", this._v("align", "center"), { left: "Left", center: "Center", right: "Right" })}
             </div>
-            ${this._themeInfo(theme)}
-            ${this._haThemeInfo()}
             <div class="grid">
               ${this._select("text_transform", "Text transform", this._v("text_transform", "uppercase"), { uppercase: "Uppercase", lowercase: "Lowercase", none: "None" })}
               ${this._number("font_size", "Font size", this._v("font_size", ""), 6, 220, "Default: 60")}
             </div>
-            <div class="preset-grid">${Object.entries(SFC_FONT_PRESETS).map(([key, item]) => this._preset(key, item, preset)).join("")}</div>
+            ${this._select("font_preset", "Font preset", preset, Object.fromEntries(Object.entries(SFC_FONT_PRESETS).map(([key, value]) => [key, value.label])))}
+            <div class="compact-hint" data-preset-description>${this._presetDescription(preset)}</div>
           </div>
         </section>
 
@@ -375,11 +398,10 @@ class SplitFlapCardEditor extends HTMLElement {
           </div>
         </details>
 
-        <section class="section preview-section">
-          <div class="section-title">Preview</div>
+        <section class="section summary-section">
+          <div class="section-title">Preview status</div>
           <div class="body">
-            <div class="preview-meta">Source: <b>${source}</b> · Segments: <b>${segmentsMode === "auto" ? "auto" : this._v("segments", 16)}</b></div>
-            <div class="preview"><split-flap-card></split-flap-card></div>
+            <div class="compact-hint" data-preview-summary>${this._previewSummary()}</div>
           </div>
         </section>
 
@@ -398,7 +420,7 @@ class SplitFlapCardEditor extends HTMLElement {
       ${this._supportOpen ? this._reportModal() : ""}`;
 
     this._bind();
-    this._updatePreview();
+    this._updateSummary();
     this._updateDiagnostics();
   }
 
@@ -411,7 +433,7 @@ class SplitFlapCardEditor extends HTMLElement {
       element.oninput = () => {
         this._config = { ...this._config, [element.dataset.k]: element.value };
         this._fire();
-        this._updatePreview();
+        this._updateSummary();
         this._updateDiagnostics();
       };
       element.onchange = () => this._set(element.dataset.k, element.value, false);
@@ -424,10 +446,6 @@ class SplitFlapCardEditor extends HTMLElement {
 
     this.shadowRoot.querySelectorAll("input[data-b]").forEach((element) => {
       element.onchange = () => this._set(element.dataset.b, element.checked, false);
-    });
-
-    this.shadowRoot.querySelectorAll("[data-preset]").forEach((element) => {
-      element.onclick = () => this._set("font_preset", element.dataset.preset, true);
     });
 
     this.shadowRoot.querySelectorAll("[data-url]").forEach((element) => {
@@ -475,20 +493,12 @@ class SplitFlapCardEditor extends HTMLElement {
     if (details) details.ontoggle = () => { this._advanced = details.open; };
   }
 
-  _updatePreview() {
-    const preview = this.shadowRoot?.querySelector(".preview split-flap-card");
-    if (!preview) return;
+  _updateSummary() {
+    const summary = this.shadowRoot?.querySelector("[data-preview-summary]");
+    if (summary) summary.textContent = this._previewSummary();
 
-    const config = this._previewConfig();
-    preview.setConfig(config);
-    if (this._hass) preview.hass = this._hass;
-
-    const meta = this.shadowRoot.querySelector(".preview-meta");
-    if (meta) {
-      const source = this._source();
-      const count = config.segments_mode === "auto" ? this._effectivePreviewLength() : this._v("segments", 16);
-      meta.innerHTML = `Source: <b>${this._e(source)}</b> · Segments: <b>${this._e(config.segments_mode === "auto" ? `auto (${count})` : String(count))}</b>`;
-    }
+    const presetDescription = this.shadowRoot?.querySelector("[data-preset-description]");
+    if (presetDescription) presetDescription.textContent = this._presetDescription(this._v("font_preset", "theme_default"));
   }
 
   _updateDiagnostics() {
@@ -499,13 +509,15 @@ class SplitFlapCardEditor extends HTMLElement {
     if (output) output.value = this._issueText();
   }
 
-  _previewConfig() {
-    const source = this._source();
-    const config = { ...this._config, source };
-    if (!config.theme) config.theme = "mechanical_gold";
-    if (!config.segments_mode) config.segments_mode = this._segmentsMode();
-    if (source === "clock" && !config.clock_format) config.clock_format = "HH:mm";
-    return config;
+  _previewSummary() {
+    const mode = this._segmentsMode();
+    const segments = mode === "auto" ? `auto (${this._effectivePreviewLength()})` : String(this._v("segments", 16));
+    return `Source: ${this._source()} · Segments: ${segments} · Native Home Assistant preview is shown below this editor.`;
+  }
+
+  _presetDescription(presetKey) {
+    const preset = SFC_FONT_PRESETS[presetKey] || SFC_FONT_PRESETS.theme_default;
+    return preset.description;
   }
 
   _effectivePreviewText() {
@@ -539,17 +551,14 @@ class SplitFlapCardEditor extends HTMLElement {
       ss: String(now.getSeconds()).padStart(2, "0"),
       A: hours >= 12 ? "PM" : "AM"
     };
-    return String(format || "HH:mm").replaceAll("HH", values.HH).replaceAll("hh", values.hh).replaceAll("H", values.H).replaceAll("h", values.h).replaceAll("mm", values.mm).replaceAll("ss", values.ss).replaceAll("A", values.A);
-  }
-
-  _themeInfo(themeKey) {
-    const theme = SFC_THEMES[themeKey] || SFC_THEMES.mechanical_gold;
-    return `<div class="info"><b>${this._e(theme.label)}</b><span>${this._e(theme.description)}</span></div>`;
-  }
-
-  _haThemeInfo() {
-    const diagnostics = this._diagnostics();
-    return `<div class="info"><b>Home Assistant theme</b><span>${this._e(diagnostics.ha_theme)} · ${this._e(diagnostics.color_mode)}</span></div>`;
+    return String(format || "HH:mm")
+      .replaceAll("HH", values.HH)
+      .replaceAll("hh", values.hh)
+      .replaceAll("H", values.H)
+      .replaceAll("h", values.h)
+      .replaceAll("mm", values.mm)
+      .replaceAll("ss", values.ss)
+      .replaceAll("A", values.A);
   }
 
   _diagnostics() {
@@ -678,10 +687,6 @@ ${yaml}
     return `<label class="field"><span>${this._e(label)}</span><textarea data-issue-field="${this._e(key)}" placeholder="${this._e(placeholder)}">${this._e(value)}</textarea></label>`;
   }
 
-  _preset(key, item, active) {
-    return `<button type="button" class="preset${key === active ? " active" : ""}" data-preset="${this._e(key)}"><b>${this._e(item.label)}</b><small>${this._e(item.description)}</small></button>`;
-  }
-
   _select(key, label, value, options) {
     return `<div class="row"><label>${this._e(label)}</label><select data-k="${this._e(key)}">${Object.entries(options).map(([optionValue, optionLabel]) => `<option value="${this._e(optionValue)}"${optionValue === value ? " selected" : ""}>${this._e(optionLabel)}</option>`).join("")}</select></div>`;
   }
@@ -725,17 +730,13 @@ ${yaml}
       input,select,textarea{box-sizing:border-box;width:100%;min-height:42px;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:9px 11px;background:rgba(0,0,0,.35);color:var(--primary-text-color,#fff);font:inherit;outline:none}
       textarea{min-height:84px;resize:vertical;line-height:1.4}
       input:focus,select:focus,textarea:focus{border-color:#f7d53b;box-shadow:0 0 0 1px rgba(247,213,59,.25)}
-      .preset-grid,.checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-      .preset,.check{display:grid;gap:4px;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.22);color:var(--primary-text-color);text-align:left}
-      .preset.active{border-color:#f7d53b;box-shadow:0 0 0 1px rgba(247,213,59,.18)}
-      .preset small{color:var(--secondary-text-color);line-height:1.3}
-      .check{display:flex;align-items:center;gap:10px;min-height:42px}
+      .checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+      .check{display:flex;align-items:center;gap:10px;min-height:42px;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.22);color:var(--primary-text-color)}
       .check input{width:auto;min-height:auto;accent-color:#f7d53b}
       summary{cursor:pointer;padding:12px 14px;font-weight:800;letter-spacing:.02em}
       .links,.modal-actions{display:flex;flex-wrap:wrap;gap:8px}
       .links button,.modal-actions button,.icon-button{color:#f7d53b;background:transparent;border:1px solid rgba(247,213,59,.35);border-radius:999px;padding:7px 10px;font-size:12px;cursor:pointer}
-      .preview{border-radius:14px;overflow:hidden;background:#020202;padding:8px}
-      .preview-meta{font-size:12px;color:var(--secondary-text-color);line-height:1.4}
+      .compact-hint{border:1px solid rgba(255,255,255,.10);border-radius:10px;padding:8px 10px;background:rgba(0,0,0,.14);font-size:12px;color:var(--secondary-text-color);line-height:1.35}
       .info{display:grid;gap:3px;border:1px solid rgba(255,255,255,.10);border-radius:12px;padding:10px;background:rgba(0,0,0,.18)}
       .info b{font-size:12px;color:var(--primary-text-color)}
       .info span{font-size:12px;color:var(--secondary-text-color);line-height:1.35}
@@ -751,7 +752,7 @@ ${yaml}
       .field{display:grid;gap:6px}
       .field span,.issue-output-label{color:var(--secondary-text-color);font-size:12px;font-weight:700}
       .issue-output{min-height:220px;margin:12px 0;font-family:Roboto Mono,monospace;font-size:12px}
-      @media(max-width:560px){.grid,.preset-grid,.checks,.modal-grid{grid-template-columns:1fr}.hero,.section,details{border-radius:14px}.body{padding:12px}.preview{padding:6px}.modal-backdrop{padding:10px}.modal{border-radius:18px;padding:14px}.modal-head{display:grid}.links button,.modal-actions button,.icon-button{min-height:38px}}
+      @media(max-width:560px){.grid,.checks,.modal-grid{grid-template-columns:1fr}.hero,.section,details{border-radius:14px}.body{padding:12px}.modal-backdrop{padding:10px}.modal{border-radius:18px;padding:14px}.modal-head{display:grid}.links button,.modal-actions button,.icon-button{min-height:38px}}
     </style>`;
   }
 
@@ -762,5 +763,12 @@ ${yaml}
 
 if (!customElements.get("split-flap-card")) customElements.define("split-flap-card", HASplitFlapCard);
 if (!customElements.get("split-flap-card-editor")) customElements.define("split-flap-card-editor", SplitFlapCardEditor);
+
 window.customCards = window.customCards || [];
-window.customCards.push({ type: "split-flap-card", name: "Split-Flap Card", preview: true, description: `Beta release ${SPLIT_FLAP_CARD_VERSION}`, documentationURL: SFC_REPO_URL });
+window.customCards.push({
+  type: "split-flap-card",
+  name: "Split-Flap Card",
+  preview: true,
+  description: `Beta release ${SPLIT_FLAP_CARD_VERSION}`,
+  documentationURL: SFC_REPO_URL
+});
