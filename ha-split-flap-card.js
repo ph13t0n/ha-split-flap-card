@@ -1,4 +1,4 @@
-const SPLIT_FLAP_CARD_VERSION = "0.1.0-beta.10";
+const SPLIT_FLAP_CARD_VERSION = "0.1.0-beta.11";
 const SFC_REPO_URL = "https://github.com/ph13t0n/ha-split-flap-card";
 const SFC_THEMES = {
   mechanical_gold: { label: "Default / Mechanical Gold", bg: "#101010", top: "#252525", bottom: "#080808", line: "#010101", border: "#313131", text: "#ffc02e", font: "Roboto Condensed, Arial Narrow, sans-serif", weight: 900 },
