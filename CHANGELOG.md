@@ -28,6 +28,30 @@ v1.0.0
 
 ---
 
+## v0.1.0-beta.11
+
+HACS metadata hotfix focused on release-channel hygiene.
+
+This release hides default-branch downloads in HACS metadata so HACS should prefer tagged GitHub releases instead of offering loose commit-hash updates.
+
+### Changed
+
+- Added `hide_default_branch: true` to `hacs.json`.
+- Bumped card/package version to `0.1.0-beta.11`.
+- Updated README to mark `v0.1.0-beta.11` as the latest recommended version.
+- Updated release-channel documentation to clarify that users should follow tagged releases rather than loose commits.
+
+### Notes
+
+- This release is focused on HACS metadata and release visibility.
+- No visual editor functionality is introduced in this release.
+- No editor layout changes are included in this release.
+- `v0.1.0-beta.10` is superseded by this metadata hotfix.
+- Refresh Home Assistant dashboard resources after updating.
+- Clear app/browser cache if the old frontend file remains loaded.
+
+---
+
 ## v0.1.0-beta.10
 
 Maintenance pre-release focused on HACS metadata, release visibility and project presentation.
