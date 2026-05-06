@@ -1,6 +1,6 @@
 {
   "name": "ha-split-flap-card",
-  "version": "0.1.0-beta.7",
+  "version": "0.1.0-beta.8",
   "description": "A split-flap display card for Home Assistant dashboards.",
   "type": "module",
   "private": true,
