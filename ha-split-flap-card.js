@@ -1,5 +1,6 @@
 const SPLIT_FLAP_CARD_VERSION = "0.1.0-beta.12-dev";
 const SFC_REPO_URL = "https://github.com/ph13t0n/ha-split-flap-card";
+const SFC_ISSUE_URL = `${SFC_REPO_URL}/issues/new`;
 
 const SFC_THEMES = {
   mechanical_gold: { label: "Default / Mechanical Gold", description: "Dark mechanical split-flap style with warm gold text.", bg: "#101010", top: "#252525", bottom: "#080808", line: "#010101", border: "#313131", text: "#ffc02e", font: "Roboto Condensed, Arial Narrow, sans-serif", weight: 900 },
@@ -232,11 +233,19 @@ class SplitFlapCardEditor extends HTMLElement {
     this._config = {};
     this._hass = null;
     this._advanced = false;
+    this._supportOpen = false;
+    this._issueFields = {
+      description: "",
+      expected: "",
+      actual: "",
+      console_errors: ""
+    };
   }
 
   set hass(hass) {
     this._hass = hass;
     this._updatePreview();
+    this._updateDiagnostics();
   }
 
   setConfig(config) {
@@ -324,6 +333,7 @@ class SplitFlapCardEditor extends HTMLElement {
               ${this._select("align", "Align", this._v("align", "center"), { left: "Left", center: "Center", right: "Right" })}
             </div>
             ${this._themeInfo(theme)}
+            ${this._haThemeInfo()}
             <div class="grid">
               ${this._select("text_transform", "Text transform", this._v("text_transform", "uppercase"), { uppercase: "Uppercase", lowercase: "Lowercase", none: "None" })}
               ${this._number("font_size", "Font size", this._v("font_size", ""), 6, 220, "Default: 60")}
@@ -373,15 +383,23 @@ class SplitFlapCardEditor extends HTMLElement {
           </div>
         </section>
 
-        <div class="links">
-          <button type="button" data-url="${SFC_REPO_URL}/blob/main/docs/UI_EDITOR_MANUAL.md">Manual</button>
-          <button type="button" data-url="${SFC_REPO_URL}/blob/main/SUPPORT.md">Support</button>
-          <button type="button" data-url="${SFC_REPO_URL}/issues/new">Report issue</button>
-        </div>
-      </div>`;
+        <section class="section support-section">
+          <div class="section-title">Support</div>
+          <div class="body">
+            <div class="diagnostics" data-diagnostics>${this._diagnosticsHtml()}</div>
+            <div class="links">
+              <button type="button" data-url="${SFC_REPO_URL}/blob/main/docs/UI_EDITOR_MANUAL.md">Manual</button>
+              <button type="button" data-url="${SFC_REPO_URL}/blob/main/SUPPORT.md">Support docs</button>
+              <button type="button" data-report>Report issue</button>
+            </div>
+          </div>
+        </section>
+      </div>
+      ${this._supportOpen ? this._reportModal() : ""}`;
 
     this._bind();
     this._updatePreview();
+    this._updateDiagnostics();
   }
 
   _bind() {
@@ -394,6 +412,7 @@ class SplitFlapCardEditor extends HTMLElement {
         this._config = { ...this._config, [element.dataset.k]: element.value };
         this._fire();
         this._updatePreview();
+        this._updateDiagnostics();
       };
       element.onchange = () => this._set(element.dataset.k, element.value, false);
     });
@@ -412,9 +431,43 @@ class SplitFlapCardEditor extends HTMLElement {
     });
 
     this.shadowRoot.querySelectorAll("[data-url]").forEach((element) => {
-      element.onclick = () => {
-        const win = window.open(element.dataset.url, "_blank", "noopener,noreferrer");
-        if (!win) location.href = element.dataset.url;
+      element.onclick = () => this._openUrl(element.dataset.url);
+    });
+
+    this.shadowRoot.querySelector("[data-report]")?.addEventListener("click", () => {
+      this._supportOpen = true;
+      this._render();
+    });
+
+    this.shadowRoot.querySelector("[data-close-report]")?.addEventListener("click", () => {
+      this._supportOpen = false;
+      this._render();
+    });
+
+    this.shadowRoot.querySelector("[data-copy-issue]")?.addEventListener("click", async () => {
+      const text = this._issueText();
+      const button = this.shadowRoot.querySelector("[data-copy-issue]");
+      try {
+        await navigator.clipboard?.writeText(text);
+        if (button) button.textContent = "Copied";
+      } catch (error) {
+        const output = this.shadowRoot.querySelector("[data-issue-output]");
+        if (output) output.value = text;
+        if (button) button.textContent = "Select and copy";
+      }
+    });
+
+    this.shadowRoot.querySelector("[data-open-issue]")?.addEventListener("click", () => {
+      const body = encodeURIComponent(this._issueText());
+      const title = encodeURIComponent(`Split-Flap Card issue: ${this._source()} editor/report`);
+      this._openUrl(`${SFC_ISSUE_URL}?title=${title}&body=${body}`);
+    });
+
+    this.shadowRoot.querySelectorAll("[data-issue-field]").forEach((element) => {
+      element.oninput = () => {
+        this._issueFields[element.dataset.issueField] = element.value;
+        const output = this.shadowRoot.querySelector("[data-issue-output]");
+        if (output) output.value = this._issueText();
       };
     });
 
@@ -436,6 +489,14 @@ class SplitFlapCardEditor extends HTMLElement {
       const count = config.segments_mode === "auto" ? this._effectivePreviewLength() : this._v("segments", 16);
       meta.innerHTML = `Source: <b>${this._e(source)}</b> · Segments: <b>${this._e(config.segments_mode === "auto" ? `auto (${count})` : String(count))}</b>`;
     }
+  }
+
+  _updateDiagnostics() {
+    const diagnostics = this.shadowRoot?.querySelector("[data-diagnostics]");
+    if (diagnostics) diagnostics.innerHTML = this._diagnosticsHtml();
+
+    const output = this.shadowRoot?.querySelector("[data-issue-output]");
+    if (output) output.value = this._issueText();
   }
 
   _previewConfig() {
@@ -486,6 +547,137 @@ class SplitFlapCardEditor extends HTMLElement {
     return `<div class="info"><b>${this._e(theme.label)}</b><span>${this._e(theme.description)}</span></div>`;
   }
 
+  _haThemeInfo() {
+    const diagnostics = this._diagnostics();
+    return `<div class="info"><b>Home Assistant theme</b><span>${this._e(diagnostics.ha_theme)} · ${this._e(diagnostics.color_mode)}</span></div>`;
+  }
+
+  _diagnostics() {
+    const themeKey = this._v("theme", "mechanical_gold");
+    const cardTheme = SFC_THEMES[themeKey] || SFC_THEMES.mechanical_gold;
+    const resource = this._resourceUrl();
+    const haTheme = this._hass?.themes?.theme || this._hass?.selectedTheme || "unknown";
+    const isDark = this._hass?.themes?.darkMode ?? document.documentElement.classList.contains("dark") ?? null;
+
+    return {
+      card_version: SPLIT_FLAP_CARD_VERSION,
+      card_type: "custom:split-flap-card",
+      source: this._source(),
+      segments_mode: this._segmentsMode(),
+      segments: this._segmentsMode() === "auto" ? `auto (${this._effectivePreviewLength()})` : String(this._v("segments", 16)),
+      card_theme_key: themeKey,
+      card_theme_label: cardTheme.label,
+      ha_theme: String(haTheme || "unknown"),
+      color_mode: isDark === true ? "dark" : isDark === false ? "light" : "unknown mode",
+      ha_version: this._hass?.config?.version || "unknown",
+      resource_url: resource,
+      browser: navigator.userAgent || "unknown"
+    };
+  }
+
+  _diagnosticsHtml() {
+    const d = this._diagnostics();
+    return `<div class="diag-grid">
+      <span>Card</span><b>${this._e(d.card_version)}</b>
+      <span>Source</span><b>${this._e(d.source)}</b>
+      <span>Segments</span><b>${this._e(d.segments)}</b>
+      <span>Card theme</span><b>${this._e(d.card_theme_label)}</b>
+      <span>HA theme</span><b>${this._e(d.ha_theme)} · ${this._e(d.color_mode)}</b>
+    </div>`;
+  }
+
+  _resourceUrl() {
+    try {
+      const scripts = Array.from(document.querySelectorAll("script[src]")).map((script) => script.src);
+      return scripts.find((src) => src.includes("ha-split-flap-card.js")) || "unknown";
+    } catch (error) {
+      return "unknown";
+    }
+  }
+
+  _issueText() {
+    const d = this._diagnostics();
+    const yaml = this._safeYaml();
+
+    return `## Description
+
+${this._issueFields.description || "_Describe the issue here._"}
+
+## Expected behavior
+
+${this._issueFields.expected || "_What did you expect to happen?_"}
+
+## Actual behavior
+
+${this._issueFields.actual || "_What actually happened?_"}
+
+## Browser console errors
+
+${this._issueFields.console_errors || "_Paste console errors here, if any._"}
+
+## Diagnostics
+
+- Card version: ${d.card_version}
+- Card type: ${d.card_type}
+- Source: ${d.source}
+- Segments mode: ${d.segments_mode}
+- Segments: ${d.segments}
+- Card theme: ${d.card_theme_label} (${d.card_theme_key})
+- Home Assistant theme: ${d.ha_theme}
+- Color mode: ${d.color_mode}
+- Home Assistant version: ${d.ha_version}
+- Resource URL: ${d.resource_url}
+- Browser: ${d.browser}
+
+## Card YAML
+
+\`\`\`yaml
+${yaml}
+\`\`\`
+`;
+  }
+
+  _safeYaml() {
+    const lines = ["type: custom:split-flap-card"];
+    Object.entries(this._config || {}).forEach(([key, value]) => {
+      if (value === undefined || value === null || value === "") return;
+      if (typeof value === "object") return;
+      lines.push(`${key}: ${JSON.stringify(value)}`);
+    });
+    return lines.join("\n");
+  }
+
+  _reportModal() {
+    const issueText = this._issueText();
+    return `<div class="modal-backdrop">
+      <div class="modal" role="dialog" aria-modal="true" aria-label="Report issue">
+        <div class="modal-head">
+          <div>
+            <h2>Report issue</h2>
+            <p>Diagnostics are generated locally. Review the text before opening GitHub.</p>
+          </div>
+          <button type="button" class="icon-button" data-close-report>Close</button>
+        </div>
+        <div class="modal-grid">
+          ${this._textarea("description", "Description", this._issueFields.description, "Describe the issue.")}
+          ${this._textarea("expected", "Expected behavior", this._issueFields.expected, "What did you expect to happen?")}
+          ${this._textarea("actual", "Actual behavior", this._issueFields.actual, "What actually happened?")}
+          ${this._textarea("console_errors", "Browser console errors", this._issueFields.console_errors, "Paste console errors here, if any.")}
+        </div>
+        <label class="issue-output-label">Generated issue text</label>
+        <textarea class="issue-output" data-issue-output readonly>${this._e(issueText)}</textarea>
+        <div class="modal-actions">
+          <button type="button" data-copy-issue>Copy issue text</button>
+          <button type="button" data-open-issue>Open GitHub issue</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  _textarea(key, label, value, placeholder) {
+    return `<label class="field"><span>${this._e(label)}</span><textarea data-issue-field="${this._e(key)}" placeholder="${this._e(placeholder)}">${this._e(value)}</textarea></label>`;
+  }
+
   _preset(key, item, active) {
     return `<button type="button" class="preset${key === active ? " active" : ""}" data-preset="${this._e(key)}"><b>${this._e(item.label)}</b><small>${this._e(item.description)}</small></button>`;
   }
@@ -510,6 +702,11 @@ class SplitFlapCardEditor extends HTMLElement {
     return `<div class="info"><b>${this._e(label)}</b><span>${this._e(value)}</span></div>`;
   }
 
+  _openUrl(url) {
+    const win = window.open(url, "_blank", "noopener,noreferrer");
+    if (!win) location.href = url;
+  }
+
   _styles() {
     return `<style>
       :host{display:block;color:var(--primary-text-color)}
@@ -525,8 +722,9 @@ class SplitFlapCardEditor extends HTMLElement {
       .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
       .row{display:grid;gap:6px}
       label{color:var(--secondary-text-color);font-size:12px;font-weight:700}
-      input,select{box-sizing:border-box;width:100%;min-height:42px;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:9px 11px;background:rgba(0,0,0,.35);color:var(--primary-text-color,#fff);font:inherit;outline:none}
-      input:focus,select:focus{border-color:#f7d53b;box-shadow:0 0 0 1px rgba(247,213,59,.25)}
+      input,select,textarea{box-sizing:border-box;width:100%;min-height:42px;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:9px 11px;background:rgba(0,0,0,.35);color:var(--primary-text-color,#fff);font:inherit;outline:none}
+      textarea{min-height:84px;resize:vertical;line-height:1.4}
+      input:focus,select:focus,textarea:focus{border-color:#f7d53b;box-shadow:0 0 0 1px rgba(247,213,59,.25)}
       .preset-grid,.checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
       .preset,.check{display:grid;gap:4px;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.22);color:var(--primary-text-color);text-align:left}
       .preset.active{border-color:#f7d53b;box-shadow:0 0 0 1px rgba(247,213,59,.18)}
@@ -534,14 +732,26 @@ class SplitFlapCardEditor extends HTMLElement {
       .check{display:flex;align-items:center;gap:10px;min-height:42px}
       .check input{width:auto;min-height:auto;accent-color:#f7d53b}
       summary{cursor:pointer;padding:12px 14px;font-weight:800;letter-spacing:.02em}
-      .links{display:flex;flex-wrap:wrap;gap:8px}
-      .links button{color:#f7d53b;background:transparent;border:1px solid rgba(247,213,59,.35);border-radius:999px;padding:7px 10px;font-size:12px;cursor:pointer}
+      .links,.modal-actions{display:flex;flex-wrap:wrap;gap:8px}
+      .links button,.modal-actions button,.icon-button{color:#f7d53b;background:transparent;border:1px solid rgba(247,213,59,.35);border-radius:999px;padding:7px 10px;font-size:12px;cursor:pointer}
       .preview{border-radius:14px;overflow:hidden;background:#020202;padding:8px}
       .preview-meta{font-size:12px;color:var(--secondary-text-color);line-height:1.4}
       .info{display:grid;gap:3px;border:1px solid rgba(255,255,255,.10);border-radius:12px;padding:10px;background:rgba(0,0,0,.18)}
       .info b{font-size:12px;color:var(--primary-text-color)}
       .info span{font-size:12px;color:var(--secondary-text-color);line-height:1.35}
-      @media(max-width:560px){.grid,.preset-grid,.checks{grid-template-columns:1fr}.hero,.section,details{border-radius:14px}.body{padding:12px}.preview{padding:6px}}
+      .diag-grid{display:grid;grid-template-columns:max-content 1fr;gap:5px 12px;border:1px solid rgba(255,255,255,.10);border-radius:12px;padding:10px;background:rgba(0,0,0,.18);font-size:12px}
+      .diag-grid span{color:var(--secondary-text-color)}
+      .diag-grid b{color:var(--primary-text-color)}
+      .modal-backdrop{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.68);padding:18px;overflow:auto}
+      .modal{max-width:780px;margin:0 auto;background:var(--card-background-color,#111);border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.55)}
+      .modal-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+      .modal-head h2{margin:0;color:var(--primary-text-color);font-size:20px}
+      .modal-head p{margin:6px 0 0;color:var(--secondary-text-color);font-size:12px;line-height:1.4}
+      .modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+      .field{display:grid;gap:6px}
+      .field span,.issue-output-label{color:var(--secondary-text-color);font-size:12px;font-weight:700}
+      .issue-output{min-height:220px;margin:12px 0;font-family:Roboto Mono,monospace;font-size:12px}
+      @media(max-width:560px){.grid,.preset-grid,.checks,.modal-grid{grid-template-columns:1fr}.hero,.section,details{border-radius:14px}.body{padding:12px}.preview{padding:6px}.modal-backdrop{padding:10px}.modal{border-radius:18px;padding:14px}.modal-head{display:grid}.links button,.modal-actions button,.icon-button{min-height:38px}}
     </style>`;
   }
 
