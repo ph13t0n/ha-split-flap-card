@@ -19,11 +19,11 @@
 
 ## Status
 
-> **Status:** Beta — `v0.1.0-beta.7`
+> **Status:** Beta — `v0.1.0-beta.8`
 
 Split-Flap Card is currently in beta. The configuration API may still evolve before `v1.0.0`, but the project is suitable for broader testing through HACS.
 
-`v0.1.0-beta.7` focuses on visual editor branding, compact support branding, mobile-friendly signed number input, 24h/12h clock options, and adaptive segment handling for text, entity and clock sources.
+`v0.1.0-beta.8` is an emergency hotfix for `v0.1.0-beta.7`. It restores the previous working visual editor layout and support workflow after the beta 7 editor redesign broke the intended editor design.
 
 ## Overview
 
@@ -37,13 +37,9 @@ The visual direction is inspired by mechanical transit displays, airport signage
 - Entity state mode.
 - Entity attribute mode.
 - Browser clock mode.
-- 24-hour clock mode.
-- 12-hour AM/PM clock mode.
-- Adaptive segment handling with `segments_mode: auto`.
-- Manual segment override with `segments_mode: manual` and `segments`.
 - Visual editor for common options.
-- Primary logo branding in the visual editor header.
-- Micro logo / wordmark branding in the support/report issue modal.
+- Restored visual editor layout from the previous working beta/canary editor runtime.
+- Restored support/report issue workflow.
 - Mechanical split-flap rendering.
 - Initial animation-related configuration compatibility.
 - Swedish charset support with `Å`, `Ä`, `Ö`.
@@ -55,7 +51,6 @@ The visual direction is inspired by mechanical transit displays, airport signage
 - Configurable colors.
 - Configurable segment size.
 - Configurable font family, size and weight.
-- Mobile-friendly signed controls for values such as `letter_vertical_offset` and `letter_spacing`.
 - Built-in themes:
   - `mechanical_gold`
   - `kiosk_gold`
@@ -68,26 +63,16 @@ The visual direction is inspired by mechanical transit displays, airport signage
 
 ## Visual editor options
 
-The visual editor exposes the most important configuration fields:
+The visual editor exposes the most important configuration fields while keeping the previous working layout structure:
 
-- `source`
-- `text`
-- `entity`
-- `attribute`
-- `clock_mode`
-- `clock_format`
-- `clock_tick_interval`
-- `segments_mode`
-- `segments`
-- `language`
-- `charset`
-- `theme`
-- `align`
-- `text_transform`
-- `letter_vertical_offset`
-- `letter_spacing`
+- Content
+- Appearance
+- Motion
+- Advanced styling
+- Manual / Support / Report issue
+- Preview
 
-Advanced styling options can still be edited directly in YAML.
+Some experimental beta 7 additions such as new adaptive segment controls and 12h/24h editor controls have been deferred until they can be added without changing or breaking the editor layout.
 
 ## Installation
 
@@ -130,7 +115,7 @@ type: module
 For manual testing after updates, change the cache query:
 
 ```yaml
-url: /local/ha-split-flap-card.js?v=0.1.0-beta.7
+url: /local/ha-split-flap-card.js?v=0.1.0-beta.8
 type: module
 ```
 
@@ -140,21 +125,21 @@ type: module
 type: custom:split-flap-card
 source: text
 text: CENTRAL STATION
-segments_mode: auto
+segments: 16
 theme: mechanical_gold
 ```
 
-## Text example with automatic segments
+## Text example
 
 ```yaml
 type: custom:split-flap-card
 source: text
 text: SPLIT-FLAP CARD
-segments_mode: auto
+segments: 16
 theme: mechanical_gold
 ```
 
-## Text example with manual segments
+## Swedish text example
 
 ```yaml
 type: custom:split-flap-card
@@ -162,7 +147,6 @@ source: text
 text: NÄSSJÖ CENTRAL
 language: sv
 charset: sv
-segments_mode: manual
 segments: 14
 theme: kiosk_gold
 ```
@@ -175,7 +159,7 @@ source: entity
 entity: input_text.split_flap_message
 language: sv
 charset: sv
-segments_mode: auto
+segments: 16
 theme: classic_airport
 ```
 
@@ -187,29 +171,17 @@ source: entity
 entity: weather.home
 attribute: temperature
 charset: weather
-segments_mode: auto
+segments: 6
 theme: terminal_amber
 ```
 
-## 24-hour clock example
+## Clock example
 
 ```yaml
 type: custom:split-flap-card
 source: clock
-clock_mode: 24h
 clock_format: HH:mm
-segments_mode: auto
-theme: mechanical_gold
-```
-
-## 12-hour clock example
-
-```yaml
-type: custom:split-flap-card
-source: clock
-clock_mode: 12h
-clock_format: h:mm A
-segments_mode: auto
+segments: 5
 theme: mechanical_gold
 ```
 
@@ -221,11 +193,9 @@ theme: mechanical_gold
 | `text` | string | — | Static text to display |
 | `entity` | string | — | Entity state to display |
 | `attribute` | string | — | Entity attribute to display |
-| `clock_mode` | string | `24h` | `24h` or `12h` |
-| `clock_format` | string | `HH:mm` | Clock format using `HH`, `H`, `hh`, `h`, `mm`, `ss`, `A` |
+| `clock_format` | string | `HH:mm` | Clock format using `HH`, `H`, `mm`, `ss` |
 | `clock_tick_interval` | number | `1000` | Clock update interval in milliseconds |
-| `segments_mode` | string | `auto` | `auto` follows output length, `manual` uses `segments` |
-| `segments` | number | `16` | Number of displayed segments when `segments_mode: manual` |
+| `segments` | number | `16` | Number of displayed segments |
 | `language` | string | `sv` | Language hint |
 | `charset` | string | `sv` | `en`, `sv`, `nordic`, `western`, `weather`, `weather_sv`, `extended`, `custom` |
 | `custom_charset` | string | — | Custom charset when using `charset: custom` |
@@ -251,17 +221,17 @@ theme: mechanical_gold
 | `segment_radius` | number | `7` | Segment corner radius in pixels |
 | `align` | string | `center` | `left`, `center`, or `right` |
 
-## Notes about adaptive segments
+## Beta 8 hotfix note
 
-`segments_mode: auto` is recommended for most use cases. It automatically adapts the displayed segment count to the current output length.
+`v0.1.0-beta.8` intentionally prioritizes restoring the working visual editor design over adding new beta 7 features.
 
-This is especially useful for:
+The following beta 7 ideas are still planned, but deferred for a later release:
 
-- Text values with varying length.
-- Entity states and attributes.
-- Clock formats such as `HH:mm`, `HH:mm:ss`, `h:mm A`, and `hh:mm A`.
-
-Use `segments_mode: manual` when you want a fixed display width.
+- Primary logo replacement inside the visual editor header without changing the editor layout.
+- Micro logo / wordmark inside the support modal header.
+- Safer signed number controls for mobile keyboards.
+- Explicit 24h / 12h AM/PM clock mode selector.
+- Adaptive segment mode for text, entity and clock sources.
 
 ## Documentation
 
