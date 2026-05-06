@@ -21,6 +21,39 @@ const SFC_FONT_PRESETS = {
   custom: { label: "Custom", description: "Use your own CSS font-family in Advanced styling.", family: "system-ui, sans-serif", weight: 800 }
 };
 
+const SFC_DEFAULTS = {
+  source: "text",
+  text: "",
+  entity: "",
+  attribute: "",
+  segments_mode: "auto",
+  segments: 16,
+  theme: "mechanical_gold",
+  font_preset: "theme_default",
+  font_size: 60,
+  font_style: "normal",
+  letter_spacing: -1,
+  letter_vertical_offset: -9,
+  text_transform: "uppercase",
+  text_glow: "off",
+  align: "center",
+  language: "sv",
+  charset: "sv",
+  pad_character: " ",
+  pad_mode: "end",
+  clock_format: "HH:mm",
+  clock_tick_interval: 1000,
+  animation: true,
+  initial_animation: true,
+  cycle_chars: true,
+  segment_width: 48,
+  segment_height: 78,
+  segment_gap: 6,
+  segment_radius: 7,
+  card_background: "#030303",
+  frame_background: "#050505"
+};
+
 class HASplitFlapCard extends HTMLElement {
   static getStubConfig() {
     return {
@@ -56,46 +89,18 @@ class HASplitFlapCard extends HTMLElement {
     const previousSignature = this._config ? this._renderSignature(this._config) : "";
 
     this._config = {
-      source,
-      text: "",
-      entity: "",
-      attribute: "",
-      segments_mode: config.segments_mode || "manual",
-      segments: 16,
-      theme: "mechanical_gold",
-      font_preset: "theme_default",
-      font_family: preset.family || theme.font,
-      font_size: 60,
-      font_weight: preset.weight || theme.weight,
-      font_style: "normal",
-      letter_spacing: -1,
-      letter_vertical_offset: -9,
-      text_transform: "uppercase",
-      text_glow: "off",
-      align: "center",
-      language: "sv",
-      charset: "sv",
-      pad_character: " ",
-      pad_mode: "end",
-      clock_format: "HH:mm",
-      clock_tick_interval: 1000,
-      animation: true,
-      initial_animation: true,
-      cycle_chars: true,
-      segment_width: 48,
-      segment_height: 78,
-      segment_gap: 6,
-      segment_radius: 7,
-      card_background: "#030303",
-      frame_background: "#050505",
+      ...SFC_DEFAULTS,
       segment_background: theme.bg,
       segment_background_top: theme.top,
       segment_background_bottom: theme.bottom,
       segment_separator_color: theme.line,
       segment_border_color: theme.border,
       text_color: theme.text,
+      font_family: preset.family || theme.font,
+      font_weight: preset.weight || theme.weight,
       ...config,
-      source
+      source,
+      segments_mode: config.segments_mode || "auto"
     };
 
     if (this._config.font_preset === "theme_default" && !config.font_family) {
@@ -262,12 +267,12 @@ class HASplitFlapCard extends HTMLElement {
       .hinge{position:absolute;left:0;right:0;top:calc(50% - 1px);height:2px;background:${this._css(c.segment_separator_color, "#010101")};z-index:8}
       .pin{position:absolute;z-index:9;top:calc(50% - 2px);width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.17)}
       .left{left:4px}.right{right:4px}
-      .tile.flip .top{animation:sfcFlipTop .34s cubic-bezier(.34,.02,.2,1)}
-      .tile.flip .bottom{animation:sfcFlipBottom .34s cubic-bezier(.34,.02,.2,1) .08s both}
-      .tile.flip .hinge{animation:sfcHingePulse .42s ease-out}
-      @keyframes sfcFlipTop{0%{transform:rotateX(0deg);filter:brightness(1.12)}50%{transform:rotateX(-88deg);filter:brightness(.82)}100%{transform:rotateX(0deg);filter:brightness(1)}}
-      @keyframes sfcFlipBottom{0%{transform:rotateX(88deg);filter:brightness(.75)}100%{transform:rotateX(0deg);filter:brightness(1)}}
-      @keyframes sfcHingePulse{0%,100%{opacity:1}50%{opacity:.55}}
+      .tile.flip .top{animation:sfcFlipTop .30s cubic-bezier(.38,.02,.22,1)}
+      .tile.flip .bottom{animation:sfcFlipBottom .30s cubic-bezier(.38,.02,.22,1) .07s both}
+      .tile.flip .hinge{animation:sfcHingePulse .36s ease-out}
+      @keyframes sfcFlipTop{0%{transform:rotateX(0deg);filter:brightness(1.08)}55%{transform:rotateX(-74deg);filter:brightness(.84)}100%{transform:rotateX(0deg);filter:brightness(1)}}
+      @keyframes sfcFlipBottom{0%{transform:rotateX(54deg);filter:brightness(.82)}100%{transform:rotateX(0deg);filter:brightness(1)}}
+      @keyframes sfcHingePulse{0%,100%{opacity:1}50%{opacity:.70}}
     </style>`;
   }
 
@@ -309,7 +314,7 @@ class SplitFlapCardEditor extends HTMLElement {
 
   _v(key, fallback = "") { return this._config[key] ?? fallback; }
   _source() { return this._v("source", this._config.entity ? "entity" : (this._config.clock || this._config.clock_format ? "clock" : "text")); }
-  _segmentsMode() { return this._v("segments_mode", this._config.segments_mode || "manual"); }
+  _segmentsMode() { return this._v("segments_mode", "auto"); }
 
   _set(key, value, render = true) {
     const next = { ...this._config, [key]: value };
@@ -328,6 +333,7 @@ class SplitFlapCardEditor extends HTMLElement {
         delete next.text;
         delete next.entity;
         delete next.attribute;
+        if (!next.segments_mode) next.segments_mode = "auto";
       }
     }
 
@@ -529,6 +535,11 @@ class SplitFlapCardEditor extends HTMLElement {
 
     this.shadowRoot.querySelector("[data-close-report]")?.addEventListener("click", () => {
       this._supportOpen = false;
+      this._render();
+    });
+
+    this.shadowRoot.querySelector("[data-clear-issue]")?.addEventListener("click", () => {
+      this._issueFields = { description: "", expected: "", actual: "", console_errors: "" };
       this._render();
     });
 
@@ -747,7 +758,8 @@ ${yaml}
         <textarea class="issue-output" data-issue-output readonly>${this._e(issueText)}</textarea>
         <div class="modal-actions">
           <button type="button" data-copy-issue>Copy issue text</button>
-          <button type="button" data-open-issue>Open GitHub issue</button>
+          <button type="button" data-clear-issue>Clear form</button>
+          <button type="button" data-open-issue>Send to GitHub</button>
         </div>
       </div>
     </div>`;
