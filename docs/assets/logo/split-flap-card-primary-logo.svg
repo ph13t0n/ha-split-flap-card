@@ -1,0 +1,41 @@
+<svg width="1680" height="420" viewBox="0 0 1680 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Split-Flap Card primary logo</title>
+  <desc id="desc">Primary horizontal Split-Flap Card logo with split-flap SF mark, wordmark, and UI Components That Flip tagline.</desc>
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFE06A"/>
+      <stop offset="0.48" stop-color="#FFC72C"/>
+      <stop offset="1" stop-color="#E5A900"/>
+    </linearGradient>
+    <linearGradient id="whiteText" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.58" stop-color="#F2F4F5"/>
+      <stop offset="1" stop-color="#C4CBD0"/>
+    </linearGradient>
+    <linearGradient id="hinge" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#050607"/>
+      <stop offset="0.5" stop-color="#777D84"/>
+      <stop offset="1" stop-color="#050607"/>
+    </linearGradient>
+    <filter id="softShadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000000" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+
+  <rect width="1680" height="420" fill="#000000"/>
+
+  <g filter="url(#softShadow)">
+    <rect x="78" y="78" width="175" height="264" rx="30" fill="url(#gold)"/>
+    <path d="M78 210H253" stroke="#050607" stroke-width="8" stroke-linecap="round"/>
+    <rect x="66" y="195" width="24" height="46" rx="5" fill="url(#hinge)"/>
+    <rect x="241" y="195" width="24" height="46" rx="5" fill="url(#hinge)"/>
+    <text x="165.5" y="178" text-anchor="middle" font-family="DIN Condensed, Barlow Condensed, Roboto Condensed, Arial Narrow, sans-serif" font-size="120" font-weight="900" fill="#050607">S</text>
+    <text x="165.5" y="314" text-anchor="middle" font-family="DIN Condensed, Barlow Condensed, Roboto Condensed, Arial Narrow, sans-serif" font-size="120" font-weight="900" fill="#050607">F</text>
+  </g>
+
+  <g transform="translate(340 112)">
+    <text x="0" y="105" font-family="DIN Condensed, Barlow Condensed, Roboto Condensed, Arial Narrow, sans-serif" font-size="118" font-weight="900" letter-spacing="28" fill="url(#whiteText)">SPLIT-FLAP</text>
+    <text x="908" y="105" font-family="DIN Condensed, Barlow Condensed, Roboto Condensed, Arial Narrow, sans-serif" font-size="118" font-weight="900" letter-spacing="22" fill="url(#gold)">CARD</text>
+    <text x="4" y="190" font-family="DIN Condensed, Barlow Condensed, Roboto Condensed, Arial Narrow, sans-serif" font-size="44" font-weight="800" letter-spacing="36" fill="#4AA3B5">UI COMPONENTS THAT FLIP</text>
+  </g>
+</svg>
