@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ph13t0n/ha-split-flap-card/main/docs/assets/logo/split-flap-card-logo.svg" alt="Split-Flap Card logo" width="640">
+  <img src="https://raw.githubusercontent.com/ph13t0n/ha-split-flap-card/main/docs/assets/logo/split-flap-card-primary-logo.svg" alt="Split-Flap Card primary logo" width="760">
 </p>
 
 <p align="center">
@@ -8,10 +8,15 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ph13t0n/ha-split-flap-card/releases"><img alt="Release" src="https://img.shields.io/github/v/release/ph13t0n/ha-split-flap-card?include_prereleases&label=release"></a>
+  <a href="https://github.com/ph13t0n/ha-split-flap-card/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/ph13t0n/ha-split-flap-card?include_prereleases&label=latest%20release"></a>
   <a href="https://github.com/ph13t0n/ha-split-flap-card/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/ph13t0n/ha-split-flap-card"></a>
   <a href="https://github.com/ph13t0n/ha-split-flap-card/issues"><img alt="Issues" src="https://img.shields.io/github/issues/ph13t0n/ha-split-flap-card"></a>
 </p>
+
+> **Latest recommended version:** `v0.1.0-beta.9`  
+> **Status:** Emergency beta hotfix  
+> **What changed:** restores `custom:split-flap-card` registration and self-contained HACS loading.  
+> [Read release notes →](https://github.com/ph13t0n/ha-split-flap-card/releases/tag/v0.1.0-beta.9)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/ph13t0n/ha-split-flap-card/main/docs/assets/images/split-flap-card-beta-preview.svg" alt="Split-Flap Card beta preview" width="100%">
@@ -19,11 +24,13 @@
 
 ## Status
 
-> **Status:** Beta — `v0.1.0-beta.8`
+> **Status:** Beta — `v0.1.0-beta.9`
 
 Split-Flap Card is currently in beta. The configuration API may still evolve before `v1.0.0`, but the project is suitable for broader testing through HACS.
 
-`v0.1.0-beta.8` is an emergency hotfix for `v0.1.0-beta.7`. It restores the previous working visual editor layout and support workflow after the beta 7 editor redesign broke the intended editor design.
+`v0.1.0-beta.9` is an emergency hotfix for `v0.1.0-beta.8`. It restores `custom:split-flap-card` registration by making the HACS-loaded root file self-contained again.
+
+`v0.1.0-beta.8` and `v0.1.0-beta.7` should be considered superseded.
 
 ## Overview
 
@@ -37,11 +44,12 @@ The visual direction is inspired by mechanical transit displays, airport signage
 - Entity state mode.
 - Entity attribute mode.
 - Browser clock mode.
+- Self-contained HACS-loaded root file.
+- Direct registration of `custom:split-flap-card`.
+- Direct registration of the visual editor.
 - Visual editor for common options.
-- Restored visual editor layout from the previous working beta/canary editor runtime.
-- Restored support/report issue workflow.
+- Advanced styling section in the editor.
 - Mechanical split-flap rendering.
-- Initial animation-related configuration compatibility.
 - Swedish charset support with `Å`, `Ä`, `Ö`.
 - Nordic charset support.
 - Western European charset support.
@@ -63,16 +71,16 @@ The visual direction is inspired by mechanical transit displays, airport signage
 
 ## Visual editor options
 
-The visual editor exposes the most important configuration fields while keeping the previous working layout structure:
+The visual editor exposes the most important configuration fields while keeping the editor layout stable:
 
 - Content
 - Appearance
 - Motion
 - Advanced styling
-- Manual / Support / Report issue
+- Manual / Support / Report issue links
 - Preview
 
-Some experimental beta 7 additions such as new adaptive segment controls and 12h/24h editor controls have been deferred until they can be added without changing or breaking the editor layout.
+Experimental additions such as adaptive segments, explicit 24h/12h editor controls, signed mobile controls and new in-editor logo placement are planned, but deferred until they can be added without changing or breaking the working editor layout.
 
 ## Installation
 
@@ -115,7 +123,7 @@ type: module
 For manual testing after updates, change the cache query:
 
 ```yaml
-url: /local/ha-split-flap-card.js?v=0.1.0-beta.8
+url: /local/ha-split-flap-card.js?v=0.1.0-beta.9
 type: module
 ```
 
@@ -221,11 +229,11 @@ theme: mechanical_gold
 | `segment_radius` | number | `7` | Segment corner radius in pixels |
 | `align` | string | `center` | `left`, `center`, or `right` |
 
-## Beta 8 hotfix note
+## Hotfix note
 
-`v0.1.0-beta.8` intentionally prioritizes restoring the working visual editor design over adding new beta 7 features.
+`v0.1.0-beta.9` intentionally prioritizes restoring the custom element registration and HACS loading path.
 
-The following beta 7 ideas are still planned, but deferred for a later release:
+Deferred items:
 
 - Primary logo replacement inside the visual editor header without changing the editor layout.
 - Micro logo / wordmark inside the support modal header.
@@ -239,6 +247,7 @@ The following beta 7 ideas are still planned, but deferred for a later release:
 - [Support](./SUPPORT.md)
 - [Changelog](./CHANGELOG.md)
 - [Standing Context](./docs/STANDING_CONTEXT.md)
+- [Releases](https://github.com/ph13t0n/ha-split-flap-card/releases)
 
 ## Support and issue reports
 
