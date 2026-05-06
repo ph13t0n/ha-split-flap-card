@@ -28,6 +28,32 @@ v1.0.0
 
 ---
 
+## v0.1.0-beta.10
+
+Maintenance pre-release focused on HACS metadata, release visibility and project presentation.
+
+This release follows the emergency beta hotfixes and is intended to make version discovery clearer in HACS and GitHub.
+
+### Changed
+
+- Added `content_in_root: true` to `hacs.json`.
+- Clarified that the HACS-loaded root file is `ha-split-flap-card.js`.
+- Updated README presentation with the primary Split-Flap Card logo.
+- Added a clearer latest recommended version/status block to README.
+- Added a direct release notes link from README.
+- Bumped card/package version to `0.1.0-beta.10`.
+
+### Notes
+
+- This release is focused on release hygiene and HACS metadata.
+- No new visual editor functionality is introduced in this release.
+- `v0.1.0-beta.7` and `v0.1.0-beta.8` should be considered superseded.
+- `v0.1.0-beta.9` restored the self-contained card registration.
+- Refresh Home Assistant dashboard resources after updating.
+- Clear app/browser cache if the old frontend file remains loaded.
+
+---
+
 ## v0.1.0-beta.8
 
 Emergency hotfix for `v0.1.0-beta.7`.
