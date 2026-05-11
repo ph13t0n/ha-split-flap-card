@@ -590,10 +590,19 @@ class SplitFlapCardEditor extends HTMLElement {
     if (output) output.value = this._issueText();
   }
 
+  _escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
   _previewSummary() {
     const mode = this._segmentsMode();
     const segments = mode === "auto" ? `auto (${this._effectivePreviewLength()})` : String(this._v("segments", 16));
-    return `Source: ${this._source()} · Segments: ${segments} · Native Home Assistant preview updates after the edited field is committed.`;
+    return this._escapeHtml(`Source: ${this._source()} · Segments: ${segments} · Native Home Assistant preview updates after the edited field is committed.`);
   }
 
   _presetDescription(presetKey) {
