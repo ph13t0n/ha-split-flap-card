@@ -1,4 +1,4 @@
-const SPLIT_FLAP_CARD_VERSION = "0.1.0-beta.12-dev";
+const SPLIT_FLAP_CARD_VERSION = "0.1.0-beta.15";
 const SFC_REPO_URL = "https://github.com/ph13t0n/ha-split-flap-card";
 const SFC_ISSUE_URL = `${SFC_REPO_URL}/issues/new`;
 
@@ -407,7 +407,7 @@ class SplitFlapCardEditor extends HTMLElement {
             <strong>Split-Flap Card</strong>
             <span>${SPLIT_FLAP_CARD_VERSION}</span>
           </div>
-          <div class="hint">Beta 12 stability branch. Text fields commit after leaving the field to prevent mobile focus loss.</div>
+          <div class="hint">Beta 15 metadata/version sync. README, package metadata and in-card version are aligned.</div>
         </div>
 
         <section class="section">
@@ -480,14 +480,14 @@ class SplitFlapCardEditor extends HTMLElement {
         <section class="section summary-section">
           <div class="section-title">Preview status</div>
           <div class="body">
-            <div class="compact-hint" data-preview-summary>${this._previewSummary()}</div>
+            <div class="compact-hint" data-preview-summary></div>
           </div>
         </section>
 
         <section class="section support-section">
           <div class="section-title">Support</div>
           <div class="body">
-            <div class="diagnostics" data-diagnostics>${this._diagnosticsHtml()}</div>
+            <div class="diagnostics" data-diagnostics></div>
             <div class="links">
               <button type="button" data-url="${SFC_REPO_URL}/blob/main/docs/UI_EDITOR_MANUAL.md">Manual</button>
               <button type="button" data-url="${SFC_REPO_URL}/blob/main/SUPPORT.md">Support docs</button>
@@ -832,6 +832,7 @@ ${yaml}
       .diag-grid{display:grid;grid-template-columns:max-content 1fr;gap:5px 12px;border:1px solid rgba(255,255,255,.10);border-radius:12px;padding:10px;background:rgba(0,0,0,.18);font-size:12px}
       .diag-grid span{color:var(--secondary-text-color)}
       .diag-grid b{color:var(--primary-text-color)}
+      .diagnostics{white-space:pre-line;border:1px solid rgba(255,255,255,.10);border-radius:12px;padding:10px;background:rgba(0,0,0,.18);font-size:12px;color:var(--secondary-text-color);line-height:1.45}
       .modal-backdrop{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.68);padding:18px;overflow:auto}
       .modal{max-width:780px;margin:0 auto;background:var(--card-background-color,#111);border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.55)}
       .modal-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
