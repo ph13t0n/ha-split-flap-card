@@ -13,10 +13,10 @@
   <a href="https://github.com/ph13t0n/ha-split-flap-card/issues"><img alt="Issues" src="https://img.shields.io/github/issues/ph13t0n/ha-split-flap-card"></a>
 </p>
 
-> **Latest recommended version:** `v0.1.0-beta.11`  
-> **Status:** Beta metadata hotfix  
-> **What changed:** hides default-branch downloads in HACS metadata so HACS should prefer tagged GitHub releases instead of loose commit updates.  
-> [Read release notes →](https://github.com/ph13t0n/ha-split-flap-card/releases/tag/v0.1.0-beta.11)
+> **Latest recommended version:** `v0.1.0-beta.15`  
+> **Status:** Beta metadata/version sync correction  
+> **What changed:** aligns README, package metadata, release notes and visible project version references after the beta 14 security hotfix.  
+> [Read release notes →](https://github.com/ph13t0n/ha-split-flap-card/releases/tag/v0.1.0-beta.15)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/ph13t0n/ha-split-flap-card/main/docs/assets/images/split-flap-card-beta-preview.svg" alt="Split-Flap Card beta preview" width="100%">
@@ -24,13 +24,13 @@
 
 ## Status
 
-> **Status:** Beta — `v0.1.0-beta.11`
+> **Status:** Beta — `v0.1.0-beta.15`
 
 Split-Flap Card is currently in beta. The configuration API may still evolve before `v1.0.0`, but the project is suitable for broader testing through HACS.
 
-`v0.1.0-beta.11` is a HACS metadata hotfix focused on hiding default-branch downloads so users are not prompted to update from a clear release version to a commit hash.
+`v0.1.0-beta.15` is a metadata and version sync correction after the beta 14 security hotfix. It keeps the public project presentation, package metadata and release notes aligned before the next feature beta.
 
-`v0.1.0-beta.7`, `v0.1.0-beta.8`, `v0.1.0-beta.9` and `v0.1.0-beta.10` should be considered superseded by the latest beta metadata hotfix.
+`v0.1.0-beta.14` was a security hotfix focused on CodeQL DOM text warnings. Earlier beta metadata hotfixes are superseded by the latest beta release.
 
 ## Overview
 
@@ -82,7 +82,7 @@ The visual editor exposes the most important configuration fields while keeping 
 - Manual / Support / Report issue links
 - Preview
 
-Experimental additions such as adaptive segments, explicit 24h/12h editor controls, signed mobile controls and new in-editor logo placement are planned, but deferred until they can be added without changing or breaking the working editor layout.
+Experimental additions such as adaptive segments, explicit 24h/12h editor controls, signed mobile controls, frame/depth polish, saved looks polish and more realistic flap animation are planned, but deferred until they can be added without changing or breaking the working editor layout.
 
 ## Installation
 
@@ -125,7 +125,7 @@ type: module
 For manual testing after updates, change the cache query:
 
 ```yaml
-url: /local/ha-split-flap-card.js?v=0.1.0-beta.11
+url: /local/ha-split-flap-card.js?v=0.1.0-beta.15
 type: module
 ```
 
@@ -233,21 +233,24 @@ theme: mechanical_gold
 
 ## Maintenance note
 
-`v0.1.0-beta.11` intentionally prioritizes HACS metadata and release-channel hygiene.
+`v0.1.0-beta.15` intentionally prioritizes release metadata and version consistency.
 
-Deferred items:
+Next planned feature work:
 
-- Primary logo replacement inside the visual editor header without changing the editor layout.
-- Micro logo / wordmark inside the support modal header.
-- Safer signed number controls for mobile keyboards.
-- Explicit 24h / 12h AM/PM clock mode selector.
-- Adaptive segment mode for text, entity and clock sources.
+- Refined frame/depth controls.
+- Decorative frame around the actual segment rail.
+- Better screw visibility and frame density.
+- Saved Looks polish.
+- Clock default/documentation polish.
+- Upper-flap fall and over-roll animation.
+- More realistic mechanical motion.
 
 ## Documentation
 
 - [UI Editor Manual](./docs/UI_EDITOR_MANUAL.md)
 - [Support](./SUPPORT.md)
 - [Changelog](./CHANGELOG.md)
+- [Roadmap](./docs/ROADMAP.md)
 - [Standing Context](./docs/STANDING_CONTEXT.md)
 - [Releases](https://github.com/ph13t0n/ha-split-flap-card/releases)
 
@@ -284,6 +287,12 @@ It does not:
 - Modify Home Assistant configuration.
 - Create entities or services.
 - Submit issue reports automatically.
+
+Security rule for future code:
+
+- Dynamic text should use `textContent`.
+- HTML templates should contain static/safe markup only.
+- Config/entity/user values must not be inserted raw into `innerHTML`.
 
 Avoid sharing screenshots or YAML containing private entity names, tokens, addresses or private URLs.
 
