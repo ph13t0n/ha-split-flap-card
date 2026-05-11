@@ -584,7 +584,7 @@ class SplitFlapCardEditor extends HTMLElement {
 
   _updateDiagnostics() {
     const diagnostics = this.shadowRoot?.querySelector("[data-diagnostics]");
-    if (diagnostics) diagnostics.innerHTML = this._diagnosticsHtml();
+    if (diagnostics) diagnostics.textContent = this._diagnosticsHtml();
 
     const output = this.shadowRoot?.querySelector("[data-issue-output]");
     if (output) output.value = this._issueText();
@@ -667,13 +667,11 @@ class SplitFlapCardEditor extends HTMLElement {
 
   _diagnosticsHtml() {
     const d = this._diagnostics();
-    return `<div class="diag-grid">
-      <span>Card</span><b>${this._e(d.card_version)}</b>
-      <span>Source</span><b>${this._e(d.source)}</b>
-      <span>Segments</span><b>${this._e(d.segments)}</b>
-      <span>Card theme</span><b>${this._e(d.card_theme_label)}</b>
-      <span>HA theme</span><b>${this._e(d.ha_theme)} · ${this._e(d.color_mode)}</b>
-    </div>`;
+    return `Card: ${d.card_version}
+Source: ${d.source}
+Segments: ${d.segments}
+Card theme: ${d.card_theme_label}
+HA theme: ${d.ha_theme} · ${d.color_mode}`;
   }
 
   _resourceUrl() {
