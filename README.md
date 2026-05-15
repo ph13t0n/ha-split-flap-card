@@ -13,10 +13,10 @@
   <a href="https://github.com/ph13t0n/ha-split-flap-card/issues"><img alt="Issues" src="https://img.shields.io/github/issues/ph13t0n/ha-split-flap-card"></a>
 </p>
 
-> **Latest recommended version:** `v0.1.0-beta.15`  
-> **Status:** Beta metadata/version sync correction  
-> **What changed:** aligns README, package metadata, release notes and visible project version references after the beta 14 security hotfix.  
-> [Read release notes →](https://github.com/ph13t0n/ha-split-flap-card/releases/tag/v0.1.0-beta.15)
+> **Latest recommended version:** `v0.1.0-beta.16`  
+> **Status:** Beta editor/display validation build  
+> **What changed:** adds frame controls, decorative screw logic, split-flap layer modes, font preset previews, `HH:mm:ss` clock default, Arlanda Express theme polish and improved upper-flap motion.  
+> [Read release notes →](https://github.com/ph13t0n/ha-split-flap-card/releases/tag/v0.1.0-beta.16)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/ph13t0n/ha-split-flap-card/main/docs/assets/images/split-flap-card-beta-preview.svg" alt="Split-Flap Card beta preview" width="100%">
@@ -24,13 +24,13 @@
 
 ## Status
 
-> **Status:** Beta — `v0.1.0-beta.15`
+> **Status:** Beta — `v0.1.0-beta.16`
 
 Split-Flap Card is currently in beta. The configuration API may still evolve before `v1.0.0`, but the project is suitable for broader testing through HACS.
 
-`v0.1.0-beta.15` is a metadata and version sync correction after the beta 14 security hotfix. It keeps the public project presentation, package metadata and release notes aligned before the next feature beta.
+`v0.1.0-beta.16` is a release-blocker validation build focused on editor usability, visual display depth, frame controls and clock/font defaults before a future stable `v0.1.0` release.
 
-`v0.1.0-beta.14` was a security hotfix focused on CodeQL DOM text warnings. Earlier beta metadata hotfixes are superseded by the latest beta release.
+`v0.1.0-beta.15` was a metadata and version sync correction after the beta 14 security hotfix. Earlier beta metadata hotfixes are superseded by the latest beta release.
 
 ## Overview
 
@@ -61,15 +61,35 @@ The visual direction is inspired by mechanical transit displays, airport signage
 - Configurable colors.
 - Configurable segment size.
 - Configurable font family, size and weight.
+- Configurable display frame.
+- Configurable decorative screws.
+- Configurable split-flap layer depth.
+- Font preset preview in the visual editor.
 - Built-in themes:
   - `mechanical_gold`
   - `kiosk_gold`
   - `classic_airport`
+  - `arlanda_express`
   - `terminal_amber`
   - `monochrome`
   - `home_assistant_blue`
-  - `sweden_delight`
+  - `sweden_delight` / revised Arlanda Express slot
 - HACS-compatible dashboard plugin structure.
+
+## Beta 16 validation focus
+
+Beta 16 adds and validates:
+
+- display frame controls
+- decorative screw logic
+- flat / raised / recessed split-flap layer modes
+- font preset previews
+- clearer custom font guidance
+- `HH:mm:ss` clock default
+- default text restoration when switching back to Text source
+- Arlanda Express inspired theme styling
+- improved upper-flap motion timing
+- clearer inset and frame separation for dashboards where the card background previously filled too much of the visible area
 
 ## Visual editor options
 
@@ -82,7 +102,9 @@ The visual editor exposes the most important configuration fields while keeping 
 - Manual / Support / Report issue links
 - Preview
 
-Experimental additions such as adaptive segments, explicit 24h/12h editor controls, signed mobile controls, frame/depth polish, saved looks polish and more realistic flap animation are planned, but deferred until they can be added without changing or breaking the working editor layout.
+Beta 16 adds display frame controls, decorative screws, split-flap layer/depth options and font preset preview directly in the editor.
+
+Larger experimental additions such as a full Saved Looks system, additional animation modes and major source refactoring are deferred until they can be added without breaking the working editor layout.
 
 ## Installation
 
@@ -125,8 +147,22 @@ type: module
 For manual testing after updates, change the cache query:
 
 ```yaml
-url: /local/ha-split-flap-card.js?v=0.1.0-beta.15
+url: /local/ha-split-flap-card.js?v=0.1.0-beta.16
 type: module
+```
+
+## CDN test URL
+
+For beta validation only:
+
+```text
+https://cdn.jsdelivr.net/gh/ph13t0n/ha-split-flap-card@beta16/ha-split-flap-card.js
+```
+
+After a GitHub release is published, the tagged CDN URL will be:
+
+```text
+https://cdn.jsdelivr.net/gh/ph13t0n/ha-split-flap-card@v0.1.0-beta.16/ha-split-flap-card.js
 ```
 
 ## Basic usage
@@ -190,9 +226,22 @@ theme: terminal_amber
 ```yaml
 type: custom:split-flap-card
 source: clock
-clock_format: HH:mm
-segments: 5
+clock_format: HH:mm:ss
+segments: 8
 theme: mechanical_gold
+```
+
+## Frame / depth example
+
+```yaml
+type: custom:split-flap-card
+source: text
+text: ARLANDA EXPRESS
+segments_mode: auto
+theme: arlanda_express
+frame_style: classic
+decorative_screws: true
+display_depth: recessed
 ```
 
 ## Configuration
@@ -200,12 +249,13 @@ theme: mechanical_gold
 | Option | Type | Default | Description |
 |---|---:|---|---|
 | `source` | string | inferred | `text`, `entity`, or `clock` |
-| `text` | string | — | Static text to display |
+| `text` | string | `SPLIT-FLAP` | Static text to display |
 | `entity` | string | — | Entity state to display |
 | `attribute` | string | — | Entity attribute to display |
-| `clock_format` | string | `HH:mm` | Clock format using `HH`, `H`, `mm`, `ss` |
+| `clock_format` | string | `HH:mm:ss` | Clock format using `HH`, `H`, `hh`, `h`, `mm`, `ss`, `A` |
 | `clock_tick_interval` | number | `1000` | Clock update interval in milliseconds |
-| `segments` | number | `16` | Number of displayed segments |
+| `segments_mode` | string | `auto` | `auto` follows output length, `manual` uses fixed segment count |
+| `segments` | number | `16` | Number of displayed segments when manual mode is used |
 | `language` | string | `sv` | Language hint |
 | `charset` | string | `sv` | `en`, `sv`, `nordic`, `western`, `weather`, `weather_sv`, `extended`, `custom` |
 | `custom_charset` | string | — | Custom charset when using `charset: custom` |
@@ -213,14 +263,18 @@ theme: mechanical_gold
 | `pad_character` | string | space | Character used to pad empty manual segments |
 | `pad_mode` | string | `end` | `start` or `end` padding |
 | `theme` | string | `mechanical_gold` | Built-in theme |
+| `frame_style` | string | `classic` | `none`, `classic`, or `heavy` |
+| `decorative_screws` | boolean | `true` | Decorative screws, automatically disabled when `frame_style: none` |
+| `display_depth` | string | `raised` | `flat`, `raised`, or `recessed` |
 | `card_background` | string | `#030303` | Card background color |
+| `frame_background` | string | `#050505` | Display frame background color |
 | `segment_background` | string | theme | Segment background color |
 | `segment_background_top` | string | theme | Top flap background color |
 | `segment_background_bottom` | string | theme | Bottom flap background color |
 | `segment_separator_color` | string | theme | Split line color |
 | `segment_border_color` | string | theme | Segment border color |
 | `text_color` | string | theme | Text color |
-| `font_family` | string | theme | CSS font-family |
+| `font_family` | string | theme | CSS font-family. Custom values go in Advanced styling → Font family. |
 | `font_size` | number | `60` | Text size in pixels |
 | `font_weight` | number/string | theme | Text weight |
 | `letter_spacing` | number | `-1` | Letter spacing adjustment |
@@ -233,17 +287,14 @@ theme: mechanical_gold
 
 ## Maintenance note
 
-`v0.1.0-beta.15` intentionally prioritizes release metadata and version consistency.
+`v0.1.0-beta.16` prioritizes release-blocking editor and display polish before a future stable `v0.1.0`.
 
-Next planned feature work:
+Next planned work after Beta 16 validation:
 
-- Refined frame/depth controls.
-- Decorative frame around the actual segment rail.
-- Better screw visibility and frame density.
-- Saved Looks polish.
-- Clock default/documentation polish.
-- Upper-flap fall and over-roll animation.
-- More realistic mechanical motion.
+- Validate Beta 16 in Home Assistant.
+- Fix direct regressions only.
+- Prepare a stable `v0.1.0` release candidate when the card is visually and functionally stable.
+- Keep larger Saved Looks work, source refactoring and additional animation modes for later beta releases.
 
 ## Documentation
 
