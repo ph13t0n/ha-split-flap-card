@@ -28,6 +28,65 @@ v1.0.0
 
 ---
 
+## v0.1.0
+
+First stable public release of **Split-Flap Card** for Home Assistant / HACS.
+
+This release stabilizes the beta work into a validated `v0.1.0` release focused on reliable HACS installation, a usable visual editor, built-in split-flap themes, support diagnostics, and a polished mechanical display experience.
+
+### Added
+
+- Stable `custom:split-flap-card` runtime for Home Assistant dashboards.
+- Visual editor with grouped sections for Content, Appearance, Motion, Advanced styling, Preview status and Support.
+- Static text source.
+- Entity state source.
+- Entity attribute source.
+- Browser clock source with `HH:mm:ss` default.
+- Automatic and manual segment modes.
+- Built-in theme presets:
+  - `mechanical_gold`
+  - `kiosk_gold`
+  - `classic_airport`
+  - `arlanda_express`
+  - `terminal_amber`
+  - `monochrome`
+  - `home_assistant_blue`
+  - `sweden_delight` / Nordic Wayfinding
+  - `terminal_blue_orange`
+  - `gate_orange`
+- Font presets with compact preview in the visual editor.
+- Compact theme preview in the Appearance section.
+- Display frame controls.
+- Decorative screw option.
+- Flat, raised and recessed split-flap layer modes.
+- In-editor support section with local diagnostics and issue report helper.
+- Swedish, Nordic, Western, weather, extended and custom charset options.
+
+### Changed
+
+- Promoted the validated beta runtime to stable `0.1.0`.
+- Updated runtime version metadata from `0.1.0-beta.16` to `0.1.0`.
+- Updated package metadata to `0.1.0`.
+- Refined airport-inspired themes and softened visible segment borders.
+- Clarified stable release status in README.
+
+### Fixed
+
+- Removed duplicate/confusing Arlanda Express theme labeling.
+- Restored Nordic Wayfinding as a distinct theme entry.
+- Improved upper-flap motion timing.
+- Improved default text restoration when switching back to Text source.
+- Improved visual separation between card background, frame and split-flap segments.
+
+### Notes
+
+- Refresh the Home Assistant dashboard after updating.
+- Clear browser/app cache if the old beta version is still loaded.
+- HACS users should install/update using the tagged release.
+- Larger work such as the Theme Library, Cloudflare Pages gallery, community theme submissions and editor-based theme loading is planned after `v0.1.0`.
+
+---
+
 ## v0.1.0-beta.11
 
 HACS metadata hotfix focused on release-channel hygiene.
@@ -74,7 +133,7 @@ This release follows the emergency beta hotfixes and is intended to make version
 - `v0.1.0-beta.7` and `v0.1.0-beta.8` should be considered superseded.
 - `v0.1.0-beta.9` restored the self-contained card registration.
 - Refresh Home Assistant dashboard resources after updating.
-- Clear app/browser cache if the old frontend file remains loaded.
+- Clear app/browser cache if the old version is still loaded.
 
 ---
 
