@@ -8,37 +8,31 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ph13t0n/ha-split-flap-card/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/ph13t0n/ha-split-flap-card?include_prereleases&label=latest%20release"></a>
+  <a href="https://github.com/ph13t0n/ha-split-flap-card/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/ph13t0n/ha-split-flap-card?label=latest%20release"></a>
   <a href="https://github.com/ph13t0n/ha-split-flap-card/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/ph13t0n/ha-split-flap-card"></a>
   <a href="https://github.com/ph13t0n/ha-split-flap-card/issues"><img alt="Issues" src="https://img.shields.io/github/issues/ph13t0n/ha-split-flap-card"></a>
 </p>
 
-> **Latest recommended version:** `v0.1.0-beta.16`  
-> **Status:** Beta editor/display validation build  
-> **What changed:** adds frame controls, decorative screw logic, split-flap layer modes, font preset previews, `HH:mm:ss` clock default, Arlanda Express theme polish and improved upper-flap motion.  
-> [Read release notes →](https://github.com/ph13t0n/ha-split-flap-card/releases/tag/v0.1.0-beta.16)
+> **Latest recommended version:** `v0.1.0`  
+> **Status:** Stable public release  
+> **What changed:** promotes the validated beta runtime to stable, keeps the polished editor, built-in themes, frame controls, support diagnostics, `HH:mm:ss` clock default and improved split-flap motion.  
+> [Read release notes →](https://github.com/ph13t0n/ha-split-flap-card/releases/tag/v0.1.0)
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ph13t0n/ha-split-flap-card/main/docs/assets/images/split-flap-card-beta-preview.svg" alt="Split-Flap Card beta preview" width="100%">
+  <img src="https://raw.githubusercontent.com/ph13t0n/ha-split-flap-card/main/docs/assets/images/split-flap-card-beta-preview.svg" alt="Split-Flap Card preview" width="100%">
 </p>
 
 ## Status
 
-> **Status:** Beta — `v0.1.0-beta.16`
-
-Split-Flap Card is currently in beta. The configuration API may still evolve before `v1.0.0`, but the project is suitable for broader testing through HACS.
-
-`v0.1.0-beta.16` is a release-blocker validation build focused on editor usability, visual display depth, frame controls and clock/font defaults before a future stable `v0.1.0` release.
-
-`v0.1.0-beta.15` was a metadata and version sync correction after the beta 14 security hotfix. Earlier beta metadata hotfixes are superseded by the latest beta release.
-
-## Overview
+> **Status:** Stable — `v0.1.0`
 
 Split-Flap Card is a Home Assistant Lovelace custom card that renders static text, entity states, entity attributes and a browser-based clock as a mechanical split-flap display.
 
 The visual direction is inspired by mechanical transit displays, airport signage, railway information boards and high-contrast wayfinding systems.
 
-## Current beta features
+`v0.1.0` is the first stable public release after the validated beta series. It focuses on a reliable HACS installation path, a usable visual editor, built-in themes, support diagnostics and a polished split-flap display experience.
+
+## Features
 
 - Static text mode.
 - Entity state mode.
@@ -64,6 +58,7 @@ The visual direction is inspired by mechanical transit displays, airport signage
 - Configurable display frame.
 - Configurable decorative screws.
 - Configurable split-flap layer depth.
+- Compact theme preview in the visual editor.
 - Font preset preview in the visual editor.
 - Built-in themes:
   - `mechanical_gold`
@@ -73,23 +68,10 @@ The visual direction is inspired by mechanical transit displays, airport signage
   - `terminal_amber`
   - `monochrome`
   - `home_assistant_blue`
-  - `sweden_delight` / revised Arlanda Express slot
+  - `sweden_delight` / Nordic Wayfinding
+  - `terminal_blue_orange`
+  - `gate_orange`
 - HACS-compatible dashboard plugin structure.
-
-## Beta 16 validation focus
-
-Beta 16 adds and validates:
-
-- display frame controls
-- decorative screw logic
-- flat / raised / recessed split-flap layer modes
-- font preset previews
-- clearer custom font guidance
-- `HH:mm:ss` clock default
-- default text restoration when switching back to Text source
-- Arlanda Express inspired theme styling
-- improved upper-flap motion timing
-- clearer inset and frame separation for dashboards where the card background previously filled too much of the visible area
 
 ## Visual editor options
 
@@ -99,12 +81,12 @@ The visual editor exposes the most important configuration fields while keeping 
 - Appearance
 - Motion
 - Advanced styling
-- Manual / Support / Report issue links
-- Preview
+- Preview status
+- Support / Report issue links
 
-Beta 16 adds display frame controls, decorative screws, split-flap layer/depth options and font preset preview directly in the editor.
+The editor includes display frame controls, decorative screws, split-flap layer/depth options, font presets and a compact theme preview.
 
-Larger experimental additions such as a full Saved Looks system, additional animation modes and major source refactoring are deferred until they can be added without breaking the working editor layout.
+Larger additions such as a full Theme Library, Cloudflare Pages gallery, Saved Looks, additional animation modes and major source refactoring are planned after `v0.1.0`.
 
 ## Installation
 
@@ -147,22 +129,16 @@ type: module
 For manual testing after updates, change the cache query:
 
 ```yaml
-url: /local/ha-split-flap-card.js?v=0.1.0-beta.16
+url: /local/ha-split-flap-card.js?v=0.1.0
 type: module
 ```
 
-## CDN test URL
+## CDN URL
 
-For beta validation only:
-
-```text
-https://cdn.jsdelivr.net/gh/ph13t0n/ha-split-flap-card@beta16/ha-split-flap-card.js
-```
-
-After a GitHub release is published, the tagged CDN URL will be:
+Tagged release CDN:
 
 ```text
-https://cdn.jsdelivr.net/gh/ph13t0n/ha-split-flap-card@v0.1.0-beta.16/ha-split-flap-card.js
+https://cdn.jsdelivr.net/gh/ph13t0n/ha-split-flap-card@v0.1.0/ha-split-flap-card.js
 ```
 
 ## Basic usage
@@ -284,17 +260,6 @@ display_depth: recessed
 | `segment_gap` | number | `6` | Gap between segments in pixels |
 | `segment_radius` | number | `7` | Segment corner radius in pixels |
 | `align` | string | `center` | `left`, `center`, or `right` |
-
-## Maintenance note
-
-`v0.1.0-beta.16` prioritizes release-blocking editor and display polish before a future stable `v0.1.0`.
-
-Next planned work after Beta 16 validation:
-
-- Validate Beta 16 in Home Assistant.
-- Fix direct regressions only.
-- Prepare a stable `v0.1.0` release candidate when the card is visually and functionally stable.
-- Keep larger Saved Looks work, source refactoring and additional animation modes for later beta releases.
 
 ## Documentation
 
